@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.4">
+<eagle version="8.2.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -11948,7 +11948,7 @@ Standard 0603 ceramic capacitor, and 0.1" leaded capacitor.</description>
 <instance part="P+8" gate="G$1" x="66.04" y="121.92" rot="MR0"/>
 <instance part="P+9" gate="G$1" x="58.42" y="121.92" rot="MR0"/>
 <instance part="P+10" gate="G$1" x="157.48" y="127"/>
-<instance part="U$1" gate="G$1" x="134.62" y="12.7"/>
+<instance part="U$1" gate="G$1" x="134.62" y="10.16"/>
 <instance part="J2" gate="G$1" x="208.28" y="152.4"/>
 <instance part="P+1" gate="1" x="226.06" y="154.94"/>
 <instance part="GND15" gate="1" x="223.52" y="121.92"/>
