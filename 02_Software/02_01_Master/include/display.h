@@ -17,6 +17,6 @@ typedef enum location_field_t {
 
 int display_init();
 int display_update(location_field_t bicycleDirection);
-int display_destroy();
+void display_destroy();
 
 #endif

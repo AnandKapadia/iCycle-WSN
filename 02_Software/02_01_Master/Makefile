@@ -1,8 +1,9 @@
 CODE_DIR = src
 
 all:
+	mkdir -p build bin
 	$(MAKE) -C $(CODE_DIR)
 
 clean:
-	rm -f build/*.o
-	rm -f bin/console
+	rm -rf build/
+	rm -rf bin/console

@@ -1,14 +1,9 @@
 #include "display.h"
 
-// Screen dimension constants
-const uint16_t SCREEN_WIDTH = 600;
-const uint16_t SCREEN_HEIGHT = 960;
-
 int main() {
 
   display_init();
 
-  // Wait two seconds
   SDL_Delay(1000);
 
   display_update(NORTH);
@@ -27,7 +22,7 @@ int main() {
   SDL_Delay(1000);
   display_update(NORTHWEST);
 
-  SDL_Delay(10000);
+  SDL_Delay(5000);
 
   display_destroy();
 
