@@ -1,1 +1,2 @@
-bin/display
+bin/console
+build/*.o

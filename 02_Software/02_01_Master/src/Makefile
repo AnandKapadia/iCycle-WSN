@@ -1,5 +1,4 @@
-# Files to be compiled with the project
-OBJS = main.cpp
+all: master
 
 # Compiler
 CC = g++
@@ -11,7 +10,8 @@ IFLAGS = -I../include/
 
 LFLAGS = -lSDL2
 
-OBJ_NAME = ../bin/display
+master: main.cpp display.o
+	$(CC) main.cpp -o ../bin/console $(CFLAGS) $(IFLAGS) $(LFLAGS) ../build/display.o
 
-master: $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) $(LFLAGS) -o $(OBJ_NAME)
+display.o: display.cpp
+	$(CC) -c display.cpp -o ../build/display.o $(CFLAGS) $(IFLAGS) $(LFLAGS)

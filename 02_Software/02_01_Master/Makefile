@@ -5,4 +5,4 @@ all:
 
 clean:
 	rm -f build/*.o
-	rm -f bin/display
+	rm -f bin/console
