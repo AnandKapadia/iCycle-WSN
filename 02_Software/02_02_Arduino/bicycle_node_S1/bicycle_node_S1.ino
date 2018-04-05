@@ -18,11 +18,16 @@
  */
 
 #include <XBee.h>
+#include <SparkFun_ADXL345.h>
 
-#define BROADCAST_ADDRESS 0xFFFF
+
+#define BROADCAST_ADDRESS (0xFFFF)
 
 // create the XBee object
 XBee xbee = XBee();
+
+// create the accelerometer object (i2c)
+ADXL345 accelerometer = ADXL345();           
 
 /*
 // allocate two bytes for to hold a 10-bit analog reading
@@ -41,40 +46,86 @@ Tx16Request tx = Tx16Request(0xFFFF, payload, sizeof(payload));
 TxStatusResponse txStatus = TxStatusResponse();
 */
 // IO Pinmap
-int txLed = 8;
-int rxLed = 9;
-int statusLed = 11;
-int errorLed = 13;
-int buttonPin = 12;
 
-void flashLed(int pin, int times, int wait) {
+const int leftLed = 2;
+const int rightLed = 4;
+const int txLed = 7;
+const int statusLed = 8;
+const int rxLed = 9;
+const int buzzer = 10;
+const int buttonPin = 12;
+const int errorLed = 13;
 
-  for (int i = 0; i < times; i++) {
-    digitalWrite(pin, HIGH);
-    delay(wait);
-    digitalWrite(pin, LOW);
-
-    if (i + 1 < times) {
-      delay(wait);
-    }
-  }
-}
+typedef struct{
+  int16_t x;
+  int16_t y;
+  int16_t z;
+} accel_data_t;
 
 void setup() {
+  //start the serial port
+  Serial.begin(9600);
+  
+  //setup the io
+  pinMode(leftLed, OUTPUT);
+  pinMode(rightLed, OUTPUT);
   pinMode(txLed, OUTPUT);
   pinMode(rxLed, OUTPUT);
   pinMode(statusLed, OUTPUT);
   pinMode(errorLed, OUTPUT);
+  pinMode(buzzer, OUTPUT);
   pinMode(buttonPin, INPUT);
 
+  //ensure all leds work
+  flashLed(leftLed, 2, 250);
+  flashLed(rightLed, 2, 250);
   flashLed(txLed, 2, 250);
   flashLed(rxLed, 2, 250);
   flashLed(statusLed, 2, 250);
   flashLed(errorLed, 2, 250);
-  
-  Serial.begin(9600);
+  flashLed(buzzer, 2, 250);
+
+  //accel setup
+  setup_accelerometer();
+
+  //xbee setup
   xbee.setSerial(Serial);
 }
+
+
+void loop() {  
+  //inits
+  uint8_t count = 0;
+  uint8_t buttonVal = digitalRead(buttonPin);
+  uint8_t txPayload[1] = {0};
+  accel_data_t accel_data;
+  accel_data.x = 0;
+  accel_data.y = 0;
+  accel_data.z = 0;
+
+  //send if button pushed
+  if(buttonVal) {
+    while(buttonVal) {
+      count++;
+      buttonVal = digitalRead(buttonPin);
+      delay(100);
+    }
+
+    //get the accelerometer data
+    accelerometer.readAccel(&(accel_data.x), &(accel_data.y), &(accel_data.z)); 
+    Serial.print(accel_data.x);
+    Serial.print(", ");
+    Serial.print(accel_data.y);
+    Serial.print(", ");
+    Serial.println(accel_data.z); 
+    sendPacket(BROADCAST_ADDRESS, (uint8_t *)&accel_data, 1);
+    flashLed(statusLed, count, 50);
+    delay(1000);
+  }
+ 
+  delay(1);
+}
+
 
 // Helper for sending an XBee Packet
 // TODO add condition codes
@@ -118,23 +169,60 @@ void sendPacket(uint16_t destAddress, uint8_t* payload, uint8_t payloadSize) {
   }
 }
 
-void loop() {   
-  uint8_t count = 0;
-  uint8_t buttonVal = digitalRead(buttonPin);
-  uint8_t txPayload[1] = {0};
-  
-  if(buttonVal) {
-    while(buttonVal) {
-      count++;
-      buttonVal = digitalRead(buttonPin);
-      delay(100);
+static void flashLed(int pin, int times, int wait) {
+
+  for (int i = 0; i < times; i++) {
+    digitalWrite(pin, HIGH);
+    delay(wait);
+    digitalWrite(pin, LOW);
+
+    if (i + 1 < times) {
+      delay(wait);
     }
-    txPayload[0] = count;
-    sendPacket(BROADCAST_ADDRESS, txPayload, 1);
-    flashLed(statusLed, count, 50);
-    delay(1000);
   }
+}
+
+static void setup_accelerometer(){
+  accelerometer.powerOn();                     // Power on the accelerometer345
+
+  accelerometer.setRangeSetting(16);           // Give the range settings
+                                               // Accepted values are 2g, 4g, 8g or 16g
+                                               // Higher Values = Wider Measurement Range
+                                               // Lower Values = Greater Sensitivity
+
+  accelerometer.setSpiBit(0);                  // Configure the device to be in 4 wire SPI mode when set to '0' or 3 wire SPI mode when set to 1
+                                               // Default: Set to 1
+                                               // SPI pins on the ATMega328: 11, 12 and 13 as reference in SPI Library 
+   
+  accelerometer.setActivityXYZ(1, 0, 0);       // Set to activate movement detection in the axes "accelerometer.setActivityXYZ(X, Y, Z);" (1 == ON, 0 == OFF)
+  accelerometer.setActivityThreshold(75);      // 62.5mg per increment   // Set activity   // Inactivity thresholds (0-255)
  
-  delay(1);
+  accelerometer.setInactivityXYZ(1, 0, 0);     // Set to detect inactivity in all the axes "accelerometer.setInactivityXYZ(X, Y, Z);" (1 == ON, 0 == OFF)
+  accelerometer.setInactivityThreshold(75);    // 62.5mg per increment   // Set inactivity // Inactivity thresholds (0-255)
+  accelerometer.setTimeInactivity(10);         // How many seconds of no activity is inactive?
+
+  accelerometer.setTapDetectionOnXYZ(0, 0, 1); // Detect taps in the directions turned ON "accelerometer.setTapDetectionOnX(X, Y, Z);" (1 == ON, 0 == OFF)
+ 
+  // Set values for what is considered a TAP and what is a DOUBLE TAP (0-255)
+  accelerometer.setTapThreshold(50);           // 62.5 mg per increment
+  accelerometer.setTapDuration(15);            // 625 μs per increment
+  accelerometer.setDoubleTapLatency(80);       // 1.25 ms per increment
+  accelerometer.setDoubleTapWindow(200);       // 1.25 ms per increment
+ 
+  // Set values for what is considered FREE FALL (0-255)
+  accelerometer.setFreeFallThreshold(7);       // (5 - 9) recommended - 62.5mg per increment
+  accelerometer.setFreeFallDuration(30);       // (20 - 70) recommended - 5ms per increment
+ 
+  // Setting all interupts to take place on INT1 pin
+  //accelerometer.setImportantInterruptMapping(1, 1, 1, 1, 1);     // Sets "accelerometer.setEveryInterruptMapping(single tap, double tap, free fall, activity, inactivity);" 
+                                                                   // Accepts only 1 or 2 values for pins INT1 and INT2. This chooses the pin on the accelerometer345 to use for Interrupts.
+                                                                   // This library may have a problem using INT2 pin. Default to INT1 pin.
+  
+  // Turn on Interrupts for each mode (1 == ON, 0 == OFF)
+  accelerometer.InactivityINT(0);
+  accelerometer.ActivityINT(0);
+  accelerometer.FreeFallINT(0);
+  accelerometer.doubleTapINT(0);
+  accelerometer.singleTapINT(0);
 }
 
