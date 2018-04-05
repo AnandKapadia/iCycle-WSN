@@ -64,12 +64,12 @@ static Rx16Response rx16 = Rx16Response();
  */
 
 
-int txLed = 8;
-int rxLed = 9;
-int rearLeftCornerLed = 6;
-int rearRightCornerLed = 7;
-int rearLeftRxLed = 2;
-int rearRightRxLed = 4;
+int txLed = 9;
+int rxLed = 8;
+int rearLeftCornerLed = 4;
+int rearRightCornerLed = 2;
+int rearLeftRxLed = 8;
+int rearRightRxLed = 7;
 int errorLed = 13;
 
 /* 
@@ -234,6 +234,7 @@ void setup() {
   pinMode(rearLeftCornerLed, OUTPUT);
   pinMode(rearRightCornerLed, OUTPUT);
   pinMode(errorLed, OUTPUT);
+  pinMode(10, OUTPUT);
 
   
   // start serial
@@ -241,13 +242,14 @@ void setup() {
   Serial.begin(9600);
   xbee.begin(Serial);
   
-  flashLed(txLed, 2, 250);
-  flashLed(rxLed, 2, 250);
-  flashLed(rearRightCornerLed, 2, 250);
-  flashLed(rearRightRxLed, 2, 250);
-  flashLed(rearLeftCornerLed, 2, 250);
-  flashLed(rearLeftRxLed, 2, 250);
-  delay(500);
+  flashLed(txLed, 2, 50);
+  flashLed(rxLed, 2, 50);
+  flashLed(rearRightCornerLed, 2, 50);
+  flashLed(rearRightRxLed, 2, 50);
+  flashLed(rearLeftCornerLed, 2, 50);
+  flashLed(rearLeftRxLed, 2, 50);
+  flashLed(errorLed, 2, 50);
+  //delay(500);
 }
 
 // Checks all bikes for stale corners. Removes corner data that is stale.
@@ -257,7 +259,7 @@ uint8_t cullBikes(){
   return 0;
 }
 
-bool isCornerAddr(XBeeAddress64 addr) {
+bool isCornerAddr(uint16_t addr) {
   return addr == CORNER_RL_ADDR || addr == CORNER_RR_ADDR;
 }
 
@@ -287,17 +289,37 @@ void loop() {
 
     // Fill in source address
     // TODO convert to 64bit addressing so all bikes are unique
-    sourceAddr = *(uint16_t*)rxFrame;
+    sourceAddr = (((uint16_t) rxFrame[0]) << 8) | ((uint16_t) rxFrame[1]);//*(uint16_t*)rxFrame;
     
+    if(sourceAddr != 42) {
+      flashLed(10, 2, 100);
+    }
     if(isCornerAddr(sourceAddr)) {
+      //flashLed(rxLed, 2, 100);
       // Message came from a corner node on our vehicle
       // Check payload for bike address and bike message RSSI
+      /*
       cornerMessage_t *cornerMessage = (cornerMessage_t*) rxPayload;
       bikeAddr = cornerMessage->bikeAddr;
       bikeRssi = cornerMessage->bikeRssi;
       bikePayload = cornerMessage->bikePayload;
+      */
+      bikeRssi = rxPayload[2];
+      bikeAddr = (((uint16_t) rxPayload[0]) << 8) | ((uint16_t) rxPayload[1]);
       cornerAddr = sourceAddr;
+      flashLed(10, 2, 100);
+
+      storeCornerData(bikeAddr, cornerAddr, bikeRssi);
+      flashLed(10, 2, 100);
+
+      if(cornerAddr == 1)
+        flashLed(rearLeftRxLed, 2, 250);
+      if(cornerAddr == 2)
+        flashLed(rearRightRxLed, 2, 250);
+
     } else {
+      flashLed(10, 1, 100);
+
       // Message came directly from bike, fill in RSSI from this packet
       bikeAddr = sourceAddr;
       bikeRssi = rx16.getRssi();
@@ -311,11 +333,11 @@ void loop() {
     //cornerRssi = 255-rxPayload[2];
 
     // Store the RSSI data from this packet with the appropriate bike and corner
-    storeCornerData(bikeAddr, cornerAddr, bikeRssi);
+    //storeCornerData(bikeAddr, cornerAddr, bikeRssi);
 
 
 
-    flashLed(rxLed, 1, 100);
+    //flashLed(rxLed, 2, 250);
   }
 
 
@@ -325,6 +347,7 @@ void loop() {
 
   for (uint8_t i = 0; i < MAX_BIKES; i++) {
     if( isBikeFresh(&bikes[i])) {
+      
       if(getCornerData(i, CORNER_RL_ADDR) < getCornerData(i, CORNER_RR_ADDR)) {
         digitalWrite(rearLeftCornerLed, HIGH);
         digitalWrite(rearRightCornerLed, LOW);
@@ -338,7 +361,9 @@ void loop() {
   }
 
   // TODO cull corners, expunging those who are unfresh
-  
+
+  //flashLed(10, 1, 50);
+
   delay(1);
 }
 
