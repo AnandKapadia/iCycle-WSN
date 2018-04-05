@@ -136,7 +136,7 @@ int display_init() {
       printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
       retv = -1;
     }
-    sVehicleImage = display_loadSurface("/home/pi/Documents/iCycle-WSN/02_Software/02_01_Master/data/vehicle.bmp");
+    sVehicleImage = display_loadSurface("/home/pi/Documents/iCycle-WSN/02_Software/02_03_Master/data/vehicle.bmp");
     if(sVehicleImage == NULL) {
       printf("Vehicle image could not be created. SDL_Error: %s\n", SDL_GetError());
       retv = -1;
@@ -146,7 +146,7 @@ int display_init() {
       printf("Vehicle image could not be texturized. SDL_Error: %s\n", SDL_GetError());
       retv = -1;
     }
-    sBicycleImage = display_loadSurface("/home/pi/Documents/iCycle-WSN/02_Software/02_01_Master/data/bicycle.bmp");
+    sBicycleImage = display_loadSurface("/home/pi/Documents/iCycle-WSN/02_Software/02_03_Master/data/bicycle.bmp");
     if(sBicycleImage == NULL) {
       printf("Bicycle image could not be created. SDL_Error: %s\n", SDL_GetError());
       retv = -1;

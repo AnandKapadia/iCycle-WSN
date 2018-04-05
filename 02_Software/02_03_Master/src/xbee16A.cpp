@@ -32,6 +32,38 @@ static int32_t xbee16A_read_reverse(int usb, char buf[MAX_BUFFER_LENGTH], uint16
 }
 
 //------------------------------------------------------------------------------
+//    NAME |                                                                   |
+//    ARGS |                                                                   |
+// RETURNS |                                                                   |
+// PURPOSE |                                                                   |
+//------------------------------------------------------------------------------
+xbee16A_result_t xbee16A_writeBuffer(const char writeBuf[MAX_BUFFER_LENGTH], uint16_t numChars) {
+
+  xbee16A_result_t retv = XBEE16A_SUCCESS;
+
+  uint16_t charsWritten = 0;
+
+  if(numChars > MAX_BUFFER_LENGTH) {
+    printf("Error: Tried to write too many characters.\n");
+    retv = XBEE16A_FAILURE;
+  }
+  else {
+    printf("--------------\n");
+    for(int i = 0; i < numChars; i++) {
+      printf("0x%x\n", writeBuf[i]);
+    }
+    printf("--------------\n");
+    charsWritten = write(sUsb, writeBuf, numChars);
+  }
+
+  if(charsWritten < numChars) {
+    retv = XBEE16A_FAILURE;
+  }
+
+  return retv;
+}
+
+//------------------------------------------------------------------------------
 // GLOBAL INTERFACE FUNCTIONS                                                  |
 //------------------------------------------------------------------------------
 
@@ -94,23 +126,34 @@ xbee16A_result_t xbee16A_init() {
 // RETURNS |                                                                   |
 // PURPOSE |                                                                   |
 //------------------------------------------------------------------------------
-xbee16A_result_t xbee16A_write(const char writeBuf[MAX_BUFFER_LENGTH], uint16_t numChars) {
+xbee16A_result_t xbee16A_write(xbee16A_txPacket_t *command) {
 
   xbee16A_result_t retv = XBEE16A_SUCCESS;
 
-  uint16_t charsWritten = 0;
+  char writeBuf[MAX_BUFFER_LENGTH] = {0};
+  uint16_t numChars = 8;
 
-  if(numChars > MAX_BUFFER_LENGTH) {
-    printf("Error: Tried to write too many characters.\n");
-    retv = XBEE16A_FAILURE;
+  writeBuf[0] = command->startDelimiter;
+  writeBuf[1] = (command->length >> 8) & 0xFF;
+  writeBuf[2] = (command->length) & 0xFF;
+  writeBuf[3] = command->frameData.apiIdentifier;
+  writeBuf[4] = command->frameData.commandData.frameId;
+  writeBuf[5] = (command->frameData.commandData.destinationAddress >> 8) & 0xFF;
+  writeBuf[6] = (command->frameData.commandData.destinationAddress) & 0xFF;
+  writeBuf[7] = command->frameData.commandData.options;
+  uint8_t checksum = 0;
+  for(uint16_t i = 0; i < (command->length-5); i++) {
+    writeBuf[8+i] = command->frameData.commandData.data[i];
+    ++numChars;
+    checksum += writeBuf[8+i];
   }
-  else {
-    charsWritten = write(sUsb, &writeBuf, numChars);
-  }
+  checksum += writeBuf[3]+writeBuf[4]+writeBuf[5]+writeBuf[6]+writeBuf[7];
+  checksum = 0xFF - checksum;
 
-  if(charsWritten < numChars) {
-    retv = XBEE16A_FAILURE;
-  }
+  writeBuf[numChars] = checksum;
+  ++numChars;
+
+  retv = xbee16A_writeBuffer(writeBuf, numChars);
 
   return retv;
 }
@@ -128,14 +171,18 @@ xbee16A_result_t xbee16A_read(xbee16A_rxPacket_t *response) {
   uint16_t charsRead = 0;
 
   // Check the start delimiter
-  charsRead = read(sUsb, &(response->startDelimiter), sizeof(response->startDelimiter));
-  if((response->startDelimiter != 0x7E) || (charsRead != sizeof(response->startDelimiter))) {
+  uint16_t retries = 0;
+  do {
+    charsRead = read(sUsb, &(response->startDelimiter), sizeof(response->startDelimiter));
+    ++retries;
+  } while(((response->startDelimiter != 0x7E) || (charsRead != sizeof(response->startDelimiter))) && (retries < 100));
+
+  if(retries >= 100) {
     printf("Error: invalid start byte\n");
     retv = XBEE16A_FAILURE;
   }
 
   // Get the length of the packet
-//  charsRead = read(sUsb, &(response->length), sizeof(response->length));
   charsRead = xbee16A_read_reverse(sUsb, (char*)&(response->length), sizeof(response->length));
   if(charsRead != sizeof(response->length)) {
     printf("Error: invalid length bytes\n");
@@ -178,4 +225,20 @@ xbee16A_result_t xbee16A_read(xbee16A_rxPacket_t *response) {
   }
  
   return retv;
+}
+
+//------------------------------------------------------------------------------
+//    NAME |                                                                   |
+//    ARGS |                                                                   |
+// RETURNS |                                                                   |
+// PURPOSE |                                                                   |
+//------------------------------------------------------------------------------
+void xbee16A_readResponseDataOut(xbee16A_rxPacket_t *response, xbee16A_nodePacket_t *nodePacket) {
+
+  nodePacket->orientation = response->frameData.commandData.data[0];
+  nodePacket->xAcceleration = response->frameData.commandData.data[1];
+  nodePacket->yAcceleration = response->frameData.commandData.data[2];
+  nodePacket->zAcceleration = response->frameData.commandData.data[3];
+
+  return;
 }
