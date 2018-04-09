@@ -20,6 +20,10 @@
 #include <XBee.h>
 #include <SparkFun_ADXL345.h>
 
+#define XBEE_SUCCESS  0
+#define XBEE_ERROR    0xff
+#define XBEE_RX_EMPTY 1
+
 
 #define BROADCAST_ADDRESS (0xFFFF)
 
@@ -28,6 +32,7 @@ XBee xbee = XBee();
 
 // create the accelerometer object (i2c)
 ADXL345 accelerometer = ADXL345();           
+
 
 /*
 // allocate two bytes for to hold a 10-bit analog reading
@@ -56,11 +61,24 @@ const int buzzer = 10;
 const int buttonPin = 12;
 const int errorLed = 13;
 
+static Rx16Response rx16 = Rx16Response();
+
 typedef struct{
   int16_t x;
   int16_t y;
   int16_t z;
 } accel_data_t;
+
+typedef enum location_field_t {
+  NORTH,
+  NORTHEAST,
+  EAST,
+  SOUTHEAST,
+  SOUTH,
+  SOUTHWEST,
+  WEST,
+  NORTHWEST
+} location_field_t;
 
 void setup() {
   //start the serial port
@@ -96,6 +114,8 @@ void setup() {
 void loop() {  
   //inits
   uint8_t count = 0;
+  static bool buzzer_bool = false;
+  static uint16_t buzzer_count = 0;
   uint8_t buttonVal = digitalRead(buttonPin);
   uint8_t txPayload[1] = {0};
   accel_data_t accel_data;
@@ -118,10 +138,84 @@ void loop() {
     Serial.print(accel_data.y);
     Serial.print(", ");
     Serial.println(accel_data.z); 
-    sendPacket(BROADCAST_ADDRESS, (uint8_t *)&accel_data, 1);
+    sendPacket(BROADCAST_ADDRESS, (uint8_t *)&accel_data, sizeof(accel_data_t));
     flashLed(statusLed, count, 50);
     delay(1000);
   }
+
+  if(buzzer_bool){
+    buzzer_count++;
+  }
+  else{
+    buzzer_count = 0;
+  }
+  if(buzzer_count > 1000){
+    buzzer_count = 0;
+    buzzer_bool = false; 
+    digitalWrite(buzzer, LOW);
+    delay(1);
+  }
+  uint8_t retv;
+  retv = retrievePacket();
+  if(retv  == XBEE_ERROR) {
+    flashLed(errorLed, 2, 100);
+  } else if(retv == XBEE_SUCCESS){
+    
+    flashLed(rxLed, 2, 100);
+    uint8_t *rxPayload = rx16.getData();
+    uint8_t *rxFrame = rx16.getFrameData();
+    uint16_t sourceAddr;
+    location_field_t location;
+    sourceAddr = (((uint16_t) rxFrame[0]) << 8) | ((uint16_t) rxFrame[1]);//*(uint16_t*)rxFrame;
+    if(sourceAddr == 0){
+      location = rxPayload[0];
+      switch(location){
+        case SOUTH: 
+          digitalWrite(leftLed, LOW);
+          digitalWrite(rightLed, LOW);
+          digitalWrite(buzzer, LOW);
+          buzzer_bool = false;
+          delay(1);
+          break;
+        case NORTHEAST:
+          digitalWrite(buzzer, HIGH);
+          digitalWrite(rightLed, HIGH);
+          digitalWrite(leftLed, LOW);
+          buzzer_bool = true;
+          break;
+        case SOUTHEAST: 
+        case EAST: 
+          digitalWrite(rightLed, HIGH);
+          digitalWrite(leftLed, LOW);          
+          digitalWrite(buzzer, LOW);
+          buzzer_bool = false;
+          break;
+        case NORTHWEST:
+          digitalWrite(buzzer, HIGH);
+          digitalWrite(rightLed, LOW);
+          digitalWrite(leftLed, HIGH);
+          buzzer_bool = true;
+          break;
+        case SOUTHWEST: 
+        case WEST: 
+          digitalWrite(rightLed, LOW);
+          digitalWrite(leftLed, HIGH);          
+          digitalWrite(buzzer, LOW);
+          buzzer_bool = false;
+          break;
+        case NORTH:
+          digitalWrite(leftLed, LOW);
+          digitalWrite(rightLed, LOW);
+          digitalWrite(buzzer, HIGH);
+          buzzer_bool = true;
+          break;
+        default: 
+          break;
+      }
+      delay(1);
+    }
+  }
+
  
   delay(1);
 }
@@ -168,6 +262,31 @@ void sendPacket(uint16_t destAddress, uint8_t* payload, uint8_t payloadSize) {
     flashLed(errorLed, 2, 250);
   }
 }
+
+
+
+
+//Retrieve a received packet and store it in rx16
+uint8_t retrievePacket(){
+  xbee.readPacket();
+    
+  if (xbee.getResponse().isAvailable()) {
+    // got something
+    if (xbee.getResponse().getApiId() == RX_16_RESPONSE) {
+      // got a rx packet
+      xbee.getResponse().getRx64Response(rx16);
+      return XBEE_SUCCESS;
+    } else {
+      // not something we were expecting
+      return XBEE_ERROR;    
+    }
+  } else if (xbee.getResponse().isError()) {
+    return XBEE_ERROR;
+  } else {
+    return XBEE_RX_EMPTY;
+  }
+}
+
 
 static void flashLed(int pin, int times, int wait) {
 
