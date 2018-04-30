@@ -3,6 +3,17 @@
 #define MASTER_ADDR     (0x0000)
 #define BROADCAST_ADDR  (0xFFFF)
 
+typedef enum location_field_t {
+    NORTH,
+    NORTHEAST,
+    EAST,
+    SOUTHEAST,
+    SOUTH,
+    SOUTHWEST,
+    WEST,
+    NORTHWEST
+} location_field_t;
+
 typedef struct bikeMessage_t {
     uint8_t other;
     uint8_t imuX;
