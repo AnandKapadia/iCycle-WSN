@@ -1,22 +1,15 @@
 #ifndef _DISPLAY_H
 #define _DISPLAY_H
 
+// Include modules
 #include <SDL2/SDL.h>
 #include <stdio.h>
 
-typedef enum location_field_t {
-  NORTH,
-  NORTHEAST,
-  EAST,
-  SOUTHEAST,
-  SOUTH,
-  SOUTHWEST,
-  WEST,
-  NORTHWEST
-} location_field_t;
+// Include custom modules
+#include "params.h"
 
 int display_init();
 int display_update(location_field_t bicycleDirection);
-void display_destroy();
+void display_cleanup();
 
 #endif

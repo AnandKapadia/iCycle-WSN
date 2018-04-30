@@ -1,0 +1,14 @@
+This is the folder containing the project for the master code.
+
+Execute the master program by calling the command:
+
+./bin/console
+
+This will display the master node's graphic display of the vehicle console.
+
+In the bin directory are all executable files.
+In the build directory are all the build output files (*.o)
+In the src directory are all the *.cpp files required for building the project.
+In the include directory are all *.h files required for building the project.
+In the data directory are all the image input files used by the project.
+
