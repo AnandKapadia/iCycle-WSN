@@ -11,8 +11,21 @@
 #include "nwk.h"
 #include "phy.h"
 #include "sys.h"
+#include "sysTimer.h"
 #include "delay.h"
 #include "gpio.h"
+
+
+static void blinkGPIO(port_pin_t pin, uint16_t delay, uint8_t repeats){
+    
+    for(uint8_t i = 0; i < repeats;  i++) {
+        gpio_set_pin_high(pin);
+        delay_ms(delay);
+        gpio_set_pin_low(pin);
+        delay_ms(delay);
+    }
+}
+
 
 // Reception callback function
 static bool appDataInd(NWK_DataInd_t *ind)
@@ -20,13 +33,15 @@ static bool appDataInd(NWK_DataInd_t *ind)
     // process the frame
     // Blink LED
     gpio_set_pin_high(RX_LED);
-    delay_ms(250);
+    delay_ms(100);
     gpio_set_pin_low(RX_LED);
     
+    uint8_t rxPayload = ind->data[0];
+    
+    blinkGPIO(STATUS_LED, 50, (rxPayload>>4));
     // Send ACK frame
     return true;
 }
-
 
 // Application in initialization function stolen from the example project
 // Most content not relevant to our application, only nwk and phy setup.
@@ -61,11 +76,7 @@ static void appInit(void)
     NWK_SetAddr(APP_ADDR);
     NWK_SetPanId(APP_PANID);
     PHY_SetChannel(APP_CHANNEL);
-    PHY_SetRxState(true);
-
-    // ?????
-    NWK_OpenEndpoint(APP_ENDPOINT, appDataInd);
-    
+    PHY_SetRxState(true);    
     
     // Seems irrelevant
     /*
@@ -98,19 +109,34 @@ void txConfirm(NWK_DataReq_t *req){
     
     if(req->status == NWK_SUCCESS_STATUS) {
         // Blink LED to confirm transmission
-        gpio_set_pin_high(TX_LED);
-        delay_ms(250);
-        gpio_set_pin_low(TX_LED);
-
+        blinkGPIO(TX_LED, 100, 1);
+    } else if(req->status == NWK_ERROR_STATUS) {
+        // ERROR: transmission failed
+        blinkGPIO(ERROR_LED, 100, 1);
+    } else if(req->status == NWK_OUT_OF_MEMORY_STATUS) {
+        // ERROR: transmission failed
+        blinkGPIO(ERROR_LED, 100, 2);
+    } else if(req->status == NWK_NO_ACK_STATUS) {
+        // ERROR: transmission failed
+        blinkGPIO(ERROR_LED, 100, 3);
+    } else if(req->status == NWK_NO_ROUTE_STATUS) {
+        // ERROR: transmission failed
+        blinkGPIO(ERROR_LED, 100, 4);
+    } else if(req->status == NWK_PHY_CHANNEL_ACCESS_FAILURE_STATUS) {
+        // ERROR: transmission failed
+        blinkGPIO(ERROR_LED, 100, 5);
+    } else if(req->status == NWK_PHY_NO_ACK_STATUS) {
+        // ERROR: transmission failed
+        blinkGPIO(ERROR_LED, 100, 6);
     } else {
         // ERROR: transmission failed
+        blinkGPIO(ERROR_LED, 100, 7);
     }        
-     
 }
 
-static void sendPacket(uint16_t destAddr, uint8_t *payload, uint8_t size) {
+static NWK_DataReq_t txMsg;
 
-    NWK_DataReq_t txMsg;
+static void sendPacket(uint16_t destAddr, uint8_t *payload, uint8_t size) {
 
     txMsg.dstAddr = destAddr;
     txMsg.dstEndpoint = APP_ENDPOINT;
@@ -122,11 +148,23 @@ static void sendPacket(uint16_t destAddr, uint8_t *payload, uint8_t size) {
     NWK_DataReq(&txMsg);
 }
 
+static SYS_Timer_t sendTimer;
+static uint8_t payload = 0x4;
+
+static void sendTimerHandler(SYS_Timer_t *timer) {
+
+    sendPacket(0x0001, &payload, 1);
+    //gpio_toggle_pin(STATUS_LED);
+}
 
 int main(void)
 {
+    
+  	irq_initialize_vectors();
+
     // TODO switch clock source to external oscillator?
 	board_init();
+    sysclk_init();
 
     // Initialize RF system
     SYS_Init();
@@ -134,27 +172,39 @@ int main(void)
     // Initialize application parameters
     appInit();
 
-    // Initialize other drivers
-    delay_init(unsigned long 16000000);
+    // Setup reception
+    NWK_OpenEndpoint(APP_ENDPOINT, appDataInd);
 
-    uint8_t payload = 0x42;
-    
+    // Initialize other drivers
+        
+    gpio_configure_pin(RX_LED, IOPORT_DIR_OUTPUT);
+    gpio_configure_pin(TX_LED, IOPORT_DIR_OUTPUT);
+    gpio_configure_pin(STATUS_LED, IOPORT_DIR_OUTPUT);
+    gpio_configure_pin(ERROR_LED, IOPORT_DIR_OUTPUT);
+
     gpio_set_pin_high(RX_LED);
     gpio_set_pin_high(TX_LED);
+    gpio_set_pin_high(STATUS_LED);
+    gpio_set_pin_high(ERROR_LED);
     delay_ms(250);
     gpio_set_pin_low(RX_LED);
     gpio_set_pin_low(TX_LED);
+    gpio_set_pin_low(STATUS_LED);
+    gpio_set_pin_low(ERROR_LED);
     
     delay_ms(1000);
 
-    
+    cpu_irq_enable();
+
+    sendTimer.interval = 500;
+    sendTimer.mode = SYS_TIMER_PERIODIC_MODE;
+    sendTimer.handler = sendTimerHandler;
+    SYS_TimerStart(&sendTimer);
+
     /* Replace with your application code */
     while (1) 
     {
         SYS_TaskHandler();
-        sendPacket(0x0002, &payload, 1);
-        delay_ms(1000);
-        
     }
 }
 

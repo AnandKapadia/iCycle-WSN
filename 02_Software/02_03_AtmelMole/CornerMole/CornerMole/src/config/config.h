@@ -50,10 +50,12 @@
 
 #define TX_LED ((IOPORT_PORTB << 3) | 0x06)
 #define RX_LED ((IOPORT_PORTB << 3) | 0x07)
-
+#define STATUS_LED ((IOPORT_PORTG << 3) | 0x01)
+#define ERROR_LED ((IOPORT_PORTG << 3) | 0x02)
+    
 /*****************************************************************************
 *****************************************************************************/
-#define APP_ADDR                0x0000
+#define APP_ADDR                0x0002
 #define APP_PANID               0x1239
 #define APP_SENDING_INTERVAL    10000
 #define APP_ENDPOINT            1
@@ -78,13 +80,14 @@
 #define NWK_ROUTE_DEFAULT_SCORE             3
 #define NWK_ACK_WAIT_TIME                   1000 /* ms */
 #define NWK_GROUPS_AMOUNT                   3
-#define NWK_ROUTE_DISCOVERY_TABLE_SIZE      5
+#define NWK_ROUTE_DISCOVERY_TABLE_SIZE      6
 #define NWK_ROUTE_DISCOVERY_TIMEOUT         1000 /* ms */
 #define APP_RX_BUF_SIZE                     5
-#define NWK_ENABLE_ROUTING
-#define NWK_ENABLE_SECURITY
-#define NWK_ENABLE_ROUTE_DISCOVERY
+//#define NWK_ENABLE_ROUTING
+//#define NWK_ENABLE_SECURITY
+//#define NWK_ENABLE_ROUTE_DISCOVERY
 
+/*
 #if APP_ADDR == 0
 #define APP_CAPTION     "Coordinator"
 #define APP_NODE_TYPE   0
@@ -104,5 +107,5 @@
 #define APP_ROUTER      0
 #define APP_ENDDEVICE   1
 #endif
-
+*/
 #endif /* _CONFIG_H_ */
