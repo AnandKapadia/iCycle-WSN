@@ -2,6 +2,7 @@
 
 #define MASTER_ADDR     (0x0000)
 #define BROADCAST_ADDR  (0xFFFF)
+#define TXRX_BLINK_TIME (50)
 /*
 typedef enum location_field_t {
     NORTH,

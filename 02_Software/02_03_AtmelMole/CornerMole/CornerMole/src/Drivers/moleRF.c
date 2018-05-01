@@ -39,15 +39,9 @@ void appInit(void) {
 bool receivePacket(NWK_DataInd_t *ind)
 {
     // process the frame
-    // Blink RX LED
-    gpio_set_pin_high(RX_LED);
-    delay_ms(100);
-    gpio_set_pin_low(RX_LED);
-    
-    //uint8_t rxPayload = ind->data[0];
-    //uint8_t rxRSSI = ind->rssi;
-    //blinkGPIO(STATUS_LED, 1, (rxRSSI));
-    
+    // Blink RX LED, add variable delay for all nodes
+    blinkGPIO(RX_LED, TXRX_BLINK_TIME+APP_ADDR*3, 1);
+   
     if(ind->size == sizeof(bikeMessage)) {
         // We received a packet from a bike node!
         // Send a message to the master with its details.
@@ -74,7 +68,7 @@ static void txConfirm(NWK_DataReq_t *req){
     
     if(req->status == NWK_SUCCESS_STATUS) {
         // Blink LED to confirm transmission
-        blinkGPIO(TX_LED, 100, 1);
+        blinkGPIO(TX_LED, TXRX_BLINK_TIME, 1);
         } else if(req->status == NWK_ERROR_STATUS) {
         // ERROR: transmission failed
         blinkGPIO(ERROR_LED, 100, 1);
