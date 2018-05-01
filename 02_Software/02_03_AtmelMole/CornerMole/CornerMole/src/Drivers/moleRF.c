@@ -32,6 +32,7 @@ void appInit(void) {
     NWK_SetPanId(APP_PANID);
     PHY_SetChannel(APP_CHANNEL);
     PHY_SetRxState(true);
+	PHY_SetTxPower(0x00);
 }
 
 // Reception callback function
@@ -61,7 +62,7 @@ bool receivePacket(NWK_DataInd_t *ind)
 #endif
 
         // Send the message to the master. This could be hoisted out of the callback
-        sendPacket(MASTER_ADDR, &cornerMessage, sizeof(cornerMessage));
+        //sendPacket(MASTER_ADDR, &cornerMessage, sizeof(cornerMessage));
     }
     
     // Do not send ACK frame

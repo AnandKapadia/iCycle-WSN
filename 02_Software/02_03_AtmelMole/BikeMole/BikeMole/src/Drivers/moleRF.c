@@ -112,6 +112,7 @@ void appInit(void) {
     NWK_SetPanId(APP_PANID);
     PHY_SetChannel(APP_CHANNEL);
     PHY_SetRxState(true);
+	PHY_SetTxPower(0x00);
     
     // Setup rx response timer
     rxResponseTimer.interval = RX_RESPONSE_HOLD_MS;
