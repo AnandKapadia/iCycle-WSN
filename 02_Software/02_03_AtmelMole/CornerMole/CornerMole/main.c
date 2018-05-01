@@ -75,11 +75,13 @@ int main(void)
     {
         SYS_TaskHandler();
 		serial_update_rx_buffer();
-
+/*
 		char c;
 		while((c = serial_read_byte_from_rx_buffer()) != '\0'){
 			serial_write_byte(c);
 		}
+        */
+
 		//serial_write_packet("HELLO FROM THE BOARD", strlen("HELLO FROM THE BOARD"));
     }
 }

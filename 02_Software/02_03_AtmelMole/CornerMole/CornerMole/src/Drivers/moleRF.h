@@ -11,12 +11,15 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 #include "gpio.h"
 #include "delay.h"
 #include "config.h"
 #include "nwk.h"
 #include "phy.h"
 #include "sys.h"
+
+#include "serial_comms.h"
 #include "msg_structs.h"
 
 void appInit(void);
