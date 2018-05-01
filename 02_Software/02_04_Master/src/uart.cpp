@@ -1,4 +1,5 @@
 // Import custom modules
+#include "msg_structs.h"
 #include "uart.h"
 
 //------------------------------------------------------------------------------
