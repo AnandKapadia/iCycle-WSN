@@ -144,11 +144,16 @@ uart_result_t uart_write(uart_txPacket_t *command) {
   char writeBuf[MAX_UART_BUFFER_LENGTH] = {0};
   uint16_t bufferPosition = 0;
 
+  /*
+  uint8_t packetHeader;
+  uart_address_t sourceAddress;
+  uint8_t rssi;
+  bikeMessage_t bikeMessage;
+  uint8_t checksum;
+  */
+
   // Move all values into the write buffer to be sent
   writeBuf[bufferPosition] = command->packetHeader;
-  ++bufferPosition;
-
-  writeBuf[bufferPosition] = command->timestamp;
   ++bufferPosition;
 
   writeBuf[bufferPosition] = command->sourceAddress.vehicleType;
@@ -160,22 +165,11 @@ uart_result_t uart_write(uart_txPacket_t *command) {
   writeBuf[bufferPosition] = command->sourceAddress.cornerAddress;
   ++bufferPosition;
 
-  writeBuf[bufferPosition] = command->destinationAddress.vehicleType;
-  ++bufferPosition;
-  
-  writeBuf[bufferPosition] = command->destinationAddress.vehicleAddress;
+  writeBuf[bufferPosition] = command->rssi;
   ++bufferPosition;
 
-  writeBuf[bufferPosition] = command->destinationAddress.cornerAddress;
+  writeBuf[bufferPosition] = command->bikeMessage.;
   ++bufferPosition;
-
-  writeBuf[bufferPosition] = command->packetLength;
-  ++bufferPosition;
-
-  for(uint8_t i = 0; i < command->packetLength; ++i) {
-    writeBuf[bufferPosition] = command->data[i];
-    ++bufferPosition;
-  }
 
   // Calculate the checksum and put it into the write buffer
   uint8_t checksum = 0;
