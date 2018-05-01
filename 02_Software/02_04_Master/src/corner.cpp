@@ -16,7 +16,8 @@
 // STATIC VARIABLE DEFINITIONS                                                 |
 //------------------------------------------------------------------------------
 static corner_node_t sCorners[NUM_CORNERS];
-static pthread_t receiveRxPacketsThreadId;
+//static pthread_t receiveRxPacketsThreadId;
+//static pthread_mutex_t cornerDataLock;
 
 //------------------------------------------------------------------------------
 // STATIC HELPER FUNCTIONS                                                     |
@@ -28,12 +29,26 @@ static pthread_t receiveRxPacketsThreadId;
 // RETURNS |                                                                   |
 // PURPOSE |                                                                   |
 //------------------------------------------------------------------------------
-static void updateCornerData(uart_rxPacket_t response) {
+void updateCornerData(uart_rxPacket_t response) {
+//static void updateCornerData(uart_rxPacket_t response) {
+
+  // LOCK THE CORNER DATA STRUCT
+//  pthread_mutex_lock(&cornerDataLock);
+
   corner_node_t *currentCornerNode = &sCorners[response.sourceAddress.cornerAddress];
-  currentCornerNode->rssiTimestamp = response.timestamp;
-  currentCornerNode->rssi = response.data[0];
+  currentCornerNode->rssiTimestamp = time(NULL);
+  currentCornerNode->rssi = response.rssi;
+
+  // UNLOCK THE CORNER DATA STRUCT
+//  pthread_mutex_unlock(&cornerDataLock);
+
+  printf("Received packet:\n");
+  printf("corner addr: %d\n", response.sourceAddress.cornerAddress);
+  printf("timestamp addr: %ld\n", currentCornerNode->rssiTimestamp);
+  printf("rssi: %d\n", currentCornerNode->rssi);
 }
 
+/*
 //------------------------------------------------------------------------------
 //    NAME |                                                                   |
 //    ARGS |                                                                   |
@@ -44,8 +59,11 @@ static void *corner_receiveRxPackets(void*) {
 
   uart_result_t retv = UART_SUCCESS;
 
+  uint32_t i = 0;
   while(true) {
     // Receive packet
+    printf("%d\n", i);
+    ++i;
     uart_rxPacket_t response;
     memset(&response, 0, sizeof(response));
     retv = uart_read(&response);
@@ -53,16 +71,14 @@ static void *corner_receiveRxPackets(void*) {
       printf("Error: uart could not read correctly.\n");
     }
     else {
-      // Check if the incoming packet is destined for us
-      if( (response.destinationAddress.vehicleType    == AUTOMOBILE) &&
-          (response.destinationAddress.vehicleAddress == MY_VEHICLE_ADDRESS) &&
-          (response.destinationAddress.cornerAddress  == MASTER) ) {
+      if(retv == UART_SUCCESS) {
         updateCornerData(response);
       }
     }
   }
 
 }
+*/
 
 //------------------------------------------------------------------------------
 // GLOBAL INTERFACE FUNCTIONS                                                  |
@@ -76,7 +92,9 @@ static void *corner_receiveRxPackets(void*) {
 //------------------------------------------------------------------------------
 int32_t corner_init() {
 
-  int32_t retv = pthread_create(&receiveRxPacketsThreadId, NULL, corner_receiveRxPackets, NULL);
+  int32_t retv = 0;
+//  int32_t retv = pthread_mutex_init(&cornerDataLock, NULL);
+//  retv = pthread_create(&receiveRxPacketsThreadId, NULL, corner_receiveRxPackets, NULL);
 
   return retv;
 }
@@ -87,28 +105,19 @@ int32_t corner_init() {
 // RETURNS |                                                                   |
 // PURPOSE |                                                                   |
 //------------------------------------------------------------------------------
-uint8_t getCornerData(uint8_t addr) {
-  for(uint8_t i = 0; i < NUM_CORNERS; i++) {
-    if(sCorners[i].cornerAddress == addr) {
-      return sCorners[i].rssi;
-    }
-  }
-  //Something went wrong
-  return 0;
-}
-
-//------------------------------------------------------------------------------
-//    NAME |                                                                   |
-//    ARGS |                                                                   |
-// RETURNS |                                                                   |
-// PURPOSE |                                                                   |
-//------------------------------------------------------------------------------
 location_field_t corner_approximatePosition() {
-  // Check all the coerner data
-  uint8_t rl = getCornerData(REAR_LEFT);
-  uint8_t rr = getCornerData(REAR_RIGHT);
-  uint8_t fl = getCornerData(FRONT_LEFT);
-  uint8_t fr = getCornerData(FRONT_RIGHT);
+
+  // LOCK THE CORNER DATA STRUCT
+//  pthread_mutex_lock(&cornerDataLock);
+
+  // Check all the corner data
+  uint8_t rl = sCorners[REAR_LEFT].rssi;
+  uint8_t rr = sCorners[REAR_RIGHT].rssi;
+  uint8_t fl = sCorners[FRONT_LEFT].rssi;
+  uint8_t fr = sCorners[FRONT_RIGHT].rssi;
+
+  // UNLOCK THE CORNER DATA STRUCT
+//  pthread_mutex_unlock(&cornerDataLock);
 
   uint8_t frontAvg = (fl + fr) / 2;
   uint8_t rearAvg = (rl + rr) / 2;

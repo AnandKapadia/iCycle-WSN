@@ -2,14 +2,12 @@
 #include <termios.h>
 
 // Import custom modules
-#include "msg_structs.h"
 #include "uart.h"
 
 //------------------------------------------------------------------------------
 // GLOBAL CONSTANT DEFINITIONS                                                 |
 //------------------------------------------------------------------------------
 static const uint16_t MAX_NUM_RX_RETRIES = 100;
-static const uint8_t EXPECTED_PACKET_HEADER = 0x7A;
 static const uint16_t MAX_UART_BUFFER_LENGTH = 20;
 
 //------------------------------------------------------------------------------
@@ -30,10 +28,10 @@ static int32_t sUsb = -1;
 static uart_result_t uart_readUsb(int32_t usb, char buf[MAX_UART_BUFFER_LENGTH], uint16_t numChars) {
 
   uart_result_t retv = UART_SUCCESS;
-  uint16_t charsRead = 0;
+  uint32_t charsRead = 0;
 
   // Try to read from the uart
-  uint16_t retries = 0;
+  uint32_t retries = 0;
   do {
     charsRead = read(usb, buf, numChars);
     ++retries;
@@ -109,8 +107,8 @@ uart_result_t uart_init() {
   }
 
   // Set baud rate
-  cfsetospeed(&tty, (speed_t)B9600);
-  cfsetispeed(&tty, (speed_t)B9600);
+  cfsetospeed(&tty, (speed_t)B4800);
+  cfsetispeed(&tty, (speed_t)B4800);
 
   // Set port to 8N1
   tty.c_cflag &= ~PARENB;
@@ -162,7 +160,7 @@ uart_result_t uart_write(uart_txPacket_t *command) {
   writeBuf[bufferPosition] = command->destinationAddress.cornerAddress;
   ++bufferPosition;
 
-  writeBuf[bufferPosition] = command->bicycleRelativeToVehicleLocation;
+  writeBuf[bufferPosition] = command->bicycleRelativeToVehicleOrientation;
   ++bufferPosition; 
 
   // Calculate the checksum and put it into the write buffer
@@ -171,6 +169,9 @@ uart_result_t uart_write(uart_txPacket_t *command) {
     checksum += writeBuf[i];
   }
   writeBuf[bufferPosition] = checksum;
+  ++bufferPosition;
+
+  writeBuf[bufferPosition] = '\n';
   ++bufferPosition;
 
   // Write the write buffer out to the uart
@@ -195,10 +196,18 @@ uart_result_t uart_read(uart_rxPacket_t *response) {
   // Get the packet header and validate its correctness
   retv = uart_readUsb(sUsb, (char*)&(response->packetHeader), sizeof(response->packetHeader));
   if( (retv != UART_SUCCESS) || (response->packetHeader != EXPECTED_PACKET_HEADER) ) {
-    if(retv == UART_FAILURE) {
-      printf("Error: invalid packet header\n");
+    if(retv == UART_SUCCESS) {
+      printf("Error: invalid packet header value\n");
+      printf("actual value: 0x%x, expected 0x%x\n", response->packetHeader, EXPECTED_PACKET_HEADER);
+      retvTotal = UART_FAILURE;
     }
-    retvTotal = retv;
+    else if(retv == UART_FAILURE) {
+      printf("Error: invalid receipt of packet header\n");
+      retvTotal = UART_FAILURE;
+    }
+    else {
+      retvTotal = retv;
+    }
   }
   else {
     // Get the source address
@@ -225,6 +234,13 @@ uart_result_t uart_read(uart_rxPacket_t *response) {
     // Get the checksum
     retv = uart_readUsb(sUsb, (char*)&(response->checksum), sizeof(response->checksum));
     if(retv != UART_SUCCESS) {
+      printf("Error: invalid checksum.\n");
+      retvTotal = retv;
+    }
+
+    // Get the trailing byte
+    retv = uart_readUsb(sUsb, (char*)&(response->packetTrailer), sizeof(response->packetTrailer));
+    if( (retv != UART_SUCCESS) || (response->packetTrailer != '\n') ) {
       printf("Error: invalid checksum.\n");
       retvTotal = retv;
     }

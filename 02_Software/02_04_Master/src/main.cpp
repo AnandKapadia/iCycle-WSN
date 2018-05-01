@@ -1,5 +1,6 @@
 // Module includes
 #include <signal.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 // Import custom modules
@@ -40,33 +41,50 @@ int main() {
   corner_init();
   uart_init();
 
+  uint32_t i = 0;
   // Execute console
   while(true) {
 
+    printf("%d\n", i);
+    ++i;
     uart_result_t retv = UART_SUCCESS;
 
-    location_field_t bicycleOrientation = corner_approximatePosition();
-    display_update(bicycleOrientation);
+    uart_rxPacket_t response;
+    memset(&response, 0, sizeof(response));
+    retv = uart_read(&response);
+    switch(retv) {
+      case UART_FAILURE:
+        printf("Error: uart could not read correctly.\n");
+        break;
+      case UART_TIMEOUT:
+        break;
+      case UART_SUCCESS:
+        updateCornerData(response);
+        break;
+      default:
+        break;
+    }
 
+//    location_field_t bicycleOrientation = corner_approximatePosition();
+//    display_update(bicycleOrientation);
+
+    /*
     // Intialize packet to be transmitted
     uart_txPacket_t command;
     memset(&command, 0, sizeof(command));
 
     // Assign packet to be transmitted
     command.packetHeader = 0x7A;
-    command.sourceAddress.vehicleType = AUTOMOBILE;
-    command.sourceAddress.vehicleAddress = 0;
-    command.sourceAddress.cornerAddress = MASTER;
-    command.destinationAddress.vehicleType = AUTOMOBILE;
-    command.destinationAddress.vehicleAddress = 0;
-    command.packetLength = 1;
-    command.data[0] = bicycleOrientation;
+    command.destinationAddress.vehicleType = BICYCLE;
+    command.destinationAddress.vehicleAddress = 0x42;
+    command.bicycleRelativeToVehicleOrientation = bicycleOrientation;
 
     // Transmit packet
     retv = uart_write(&command);
     if(retv != UART_SUCCESS) {
       printf("Error: uart could not write correctly.\n");
     }
+    */
   }
 
   return 0;
@@ -87,3 +105,4 @@ void intHandler(int sig) {
   // Quit the program
   raise(SIGKILL);
 }
+

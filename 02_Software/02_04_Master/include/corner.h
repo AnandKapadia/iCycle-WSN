@@ -7,6 +7,7 @@
 
 // Include custom modules
 #include "params.h"
+#include "uart.h"
 
 typedef struct corner_node_t {
   uint8_t vehicleAddress;
@@ -16,7 +17,8 @@ typedef struct corner_node_t {
 } corner_node_t;
 
 int32_t corner_init();
-uint8_t getCornerData(uint8_t addr);
 location_field_t corner_approximatePosition();
+// TODO: DELETE THIS
+void updateCornerData(uart_rxPacket_t response);
 
 #endif
