@@ -7,15 +7,18 @@
 
 #include "moleRF.h"
 
-// Payload struct to hold the message to be sent to the master
+// Payload structs to hold received messages
 static cornerMessage_t cornerMessage;
 static bikeMessage_t bikeMessage;
+
+// Message to send to master pi
+static uart_rxPacket_t piMessage;
 
 // Transmit frame
 static NWK_DataReq_t txMsg;
 
-static void transferReceivedPacket(){
-    
+static void transferReceivedPacket(uart_rxPacket_t *pkt){
+    serial_write_packet(pkt, sizeof(uart_rxPacket_t));
 }
 
 
@@ -44,30 +47,35 @@ bool receivePacket(NWK_DataInd_t *ind)
 {
     // process the frame
     // Blink RX LED
-    gpio_set_pin_high(RX_LED);
-    delay_ms(100);
-    gpio_set_pin_low(RX_LED);
+    blinkGPIO(RX_LED, 50, 1);
     
-    //uint8_t rxPayload = ind->data[0];
-    //uint8_t rxRSSI = ind->rssi;
-    //blinkGPIO(STATUS_LED, 1, (rxRSSI));
     
-    if(ind->size == sizeof(bikeMessage)) {
-        // We received a packet from a bike node!
-        // Send a message to the master with its details.
-        cornerMessage.bikeAddress = ind->srcAddr;
-        cornerMessage.bikeRssi = ind->rssi;
-        memcpy(&cornerMessage.bikePayload, ind->data, sizeof(bikeMessage));
+    if(ind->dstAddr == BROADCAST_ADDR && ind->size == sizeof(bikeMessage)) {
+        // We received a packet from a bike node! send it to the pi
+        
+        piMessage.packetHeader = 0x7A; // TODO convert to const
+        piMessage.sourceAddress.vehicleAddress = (uint8_t) ind->srcAddr;
+        piMessage.sourceAddress.cornerAddress = FRONT_LEFT;
+        piMessage.sourceAddress.vehicleType = BICYCLE;
+        piMessage.rssi = ind->rssi;
+        memcpy(&piMessage.bikeMessage, ind->data, sizeof(bikeMessage));
 
-#ifdef DEBUG_UART
-        uint8_t uartMsgBuf[20];
-        sprintf(uartMsgBuf, "RSSI: %d\n", cornerMessage.bikeRssi);
-        serial_write_packet(uartMsgBuf, strlen(uartMsgBuf));
-#endif
+    } else if (ind->dstAddr == MASTER_ADDR) {
+        // We received a message from another corner, parse it to send to the pi
+        cornerMessage_t *cornerPtr = ind->data;
+        
+        piMessage.packetHeader = 0x7A;
+        piMessage.sourceAddress.vehicleAddress = cornerPtr->bikeAddress;
+        piMessage.sourceAddress.cornerAddress = ind->srcAddr;
+        piMessage.sourceAddress.vehicleType = BICYCLE;
+        piMessage.rssi = cornerPtr->bikeRssi;
+        memcpy(&piMessage.bikeMessage, &(cornerPtr->bikePayload), sizeof(bikeMessage));
 
-        // Send the message to the master. This could be hoisted out of the callback
-        //sendPacket(MASTER_ADDR, &cornerMessage, sizeof(cornerMessage));
     }
+        
+    // Send to the master pi
+    transferReceivedPacket(&piMessage);
+    //sendPacket(MASTER_ADDR, &cornerMessage, sizeof(cornerMessage));
     
     // Do not send ACK frame
     return false;
