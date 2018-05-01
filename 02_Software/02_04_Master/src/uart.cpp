@@ -1,3 +1,6 @@
+// Import modules
+#include <termios.h>
+
 // Import custom modules
 #include "msg_structs.h"
 #include "uart.h"
@@ -7,6 +10,7 @@
 //------------------------------------------------------------------------------
 static const uint16_t MAX_NUM_RX_RETRIES = 100;
 static const uint8_t EXPECTED_PACKET_HEADER = 0x7A;
+static const uint16_t MAX_UART_BUFFER_LENGTH = 20;
 
 //------------------------------------------------------------------------------
 // STATIC VARIABLE DEFINITIONS                                                 |
@@ -145,32 +149,21 @@ uart_result_t uart_write(uart_txPacket_t *command) {
   char writeBuf[MAX_UART_BUFFER_LENGTH] = {0};
   uint16_t bufferPosition = 0;
 
-  /*
-  uint8_t packetHeader;
-  uart_address_t sourceAddress;
-  uint8_t rssi;
-  bikeMessage_t bikeMessage;
-  uint8_t checksum;
-  */
-
   // Move all values into the write buffer to be sent
   writeBuf[bufferPosition] = command->packetHeader;
   ++bufferPosition;
 
-  writeBuf[bufferPosition] = command->sourceAddress.vehicleType;
+  writeBuf[bufferPosition] = command->destinationAddress.vehicleType;
   ++bufferPosition;
 
-  writeBuf[bufferPosition] = command->sourceAddress.vehicleAddress;
+  writeBuf[bufferPosition] = command->destinationAddress.vehicleAddress;
   ++bufferPosition;
 
-  writeBuf[bufferPosition] = command->sourceAddress.cornerAddress;
+  writeBuf[bufferPosition] = command->destinationAddress.cornerAddress;
   ++bufferPosition;
 
-  writeBuf[bufferPosition] = command->rssi;
-  ++bufferPosition;
-
-  writeBuf[bufferPosition] = command->bikeMessage.;
-  ++bufferPosition;
+  writeBuf[bufferPosition] = command->bicycleRelativeToVehicleLocation;
+  ++bufferPosition; 
 
   // Calculate the checksum and put it into the write buffer
   uint8_t checksum = 0;
@@ -215,31 +208,17 @@ uart_result_t uart_read(uart_rxPacket_t *response) {
       retvTotal = retv;
     }
 
-    // Get the timestamp
-    retv = uart_readUsb(sUsb, (char*)&(response->timestamp), sizeof(response->timestamp));
+    // Get the rssi
+    retv = uart_readUsb(sUsb, (char*)&(response->rssi), sizeof(response->rssi));
     if(retv != UART_SUCCESS) {
-      printf("Error: invalid timestamp.\n");
+      printf("Error: invalid rssi bytes.\n");
       retvTotal = retv;
     }
 
-    // Get the destination address
-    retv = uart_readUsb(sUsb, (char*)&(response->destinationAddress), sizeof(response->destinationAddress));
+    // Get the bicycle message data
+    retv = uart_readUsb(sUsb, (char*)&(response->bikeMessage), sizeof(response->bikeMessage));
     if(retv != UART_SUCCESS) {
-      printf("Error: invalid destination address bytes.\n");
-      retvTotal = retv;
-    }
-
-    // Get the length of the packet
-    retv = uart_readUsb(sUsb, (char*)&(response->packetLength), sizeof(response->packetLength));
-    if( (retv != UART_SUCCESS) || (response->packetLength > MAX_UART_DATA_LENGTH) ) {
-      printf("Error: invalid length bytes\n");
-      retvTotal = retv;
-    }
-
-    // Get the data packet
-    retv = uart_readUsb(sUsb, (char*)&(response->data), response->packetLength);
-    if(retv != UART_SUCCESS) {
-      printf("Error: invalid response bytes.\n");
+      printf("Error: invalid bicycle message bytes.\n");
       retvTotal = retv;
     }
 

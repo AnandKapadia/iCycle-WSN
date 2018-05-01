@@ -37,6 +37,7 @@ typedef struct uart_txPacket_t {
   uint8_t packetHeader;
   uart_address_t destinationAddress;
   location_field_t bicycleRelativeToVehicleLocation;
+  uint8_t checksum;
 } uart_txPacket_t;
 
 uart_result_t uart_init();
