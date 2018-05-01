@@ -1,6 +1,8 @@
 #ifndef _PARAMS_H
 #define _PARAMS_H
 
+#include <stdint.h>
+
 static const uint8_t NUM_CORNERS = 4;
 static const uint8_t MY_VEHICLE_ADDRESS = 0;
 

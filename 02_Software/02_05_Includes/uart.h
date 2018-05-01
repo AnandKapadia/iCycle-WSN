@@ -33,6 +33,7 @@ typedef struct uart_rxPacket_t {
   uint8_t rssi;
   bikeMessage_t bikeMessage;
   uint8_t checksum;
+  uint8_t packetTrailer;
 } uart_rxPacket_t;
 
 typedef struct uart_txPacket_t {

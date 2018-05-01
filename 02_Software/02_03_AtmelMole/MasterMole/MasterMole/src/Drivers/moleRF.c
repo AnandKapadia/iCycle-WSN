@@ -58,6 +58,7 @@ bool receivePacket(NWK_DataInd_t *ind)
         piMessage.sourceAddress.cornerAddress = FRONT_LEFT;
         piMessage.sourceAddress.vehicleType = BICYCLE;
         piMessage.rssi = ind->rssi;
+        piMessage.packetTrailer = '\n';
         memcpy(&piMessage.bikeMessage, ind->data, sizeof(bikeMessage));
 
     } else if (ind->dstAddr == MASTER_ADDR && ind->size == sizeof(cornerMessage_t)) {
@@ -69,6 +70,7 @@ bool receivePacket(NWK_DataInd_t *ind)
         piMessage.sourceAddress.cornerAddress = ind->srcAddr;
         piMessage.sourceAddress.vehicleType = BICYCLE;
         piMessage.rssi = cornerPtr->bikeRssi;
+        piMessage.packetTrailer = '\n';
         memcpy(&piMessage.bikeMessage, &(cornerPtr->bikePayload), sizeof(bikeMessage));
 
     }
