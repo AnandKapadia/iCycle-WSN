@@ -48,7 +48,7 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-#define DEBUG_UART
+//#define DEBUG_UART
 
 #define TX_LED ((IOPORT_PORTB << 3) | 0x06)
 #define RX_LED ((IOPORT_PORTB << 3) | 0x07)

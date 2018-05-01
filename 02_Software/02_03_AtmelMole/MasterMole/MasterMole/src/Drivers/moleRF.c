@@ -60,7 +60,7 @@ bool receivePacket(NWK_DataInd_t *ind)
         piMessage.rssi = ind->rssi;
         memcpy(&piMessage.bikeMessage, ind->data, sizeof(bikeMessage));
 
-    } else if (ind->dstAddr == MASTER_ADDR) {
+    } else if (ind->dstAddr == MASTER_ADDR && ind->size == sizeof(cornerMessage_t)) {
         // We received a message from another corner, parse it to send to the pi
         cornerMessage_t *cornerPtr = ind->data;
         
