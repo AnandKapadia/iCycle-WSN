@@ -26,3 +26,8 @@ typedef struct cornerMessage_t {
     int8_t bikeRssi;
     bikeMessage_t bikePayload;
 } cornerMessage_t;
+
+typedef struct masterMessage_t {
+    uint8_t masterID;
+    uint8_t location;
+} masterMessage_t;

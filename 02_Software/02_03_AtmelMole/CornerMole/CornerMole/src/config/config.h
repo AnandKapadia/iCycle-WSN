@@ -48,6 +48,8 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+#define DEBUG_UART
+
 #define TX_LED ((IOPORT_PORTB << 3) | 0x06)
 #define RX_LED ((IOPORT_PORTB << 3) | 0x07)
 #define STATUS_LED ((IOPORT_PORTG << 3) | 0x01)
@@ -62,11 +64,11 @@
 #define APP_SECURITY_KEY        "TestSecurityKey0"
 
 #if (defined (PHY_AT86RF212B) || defined (PHY_AT86RF212))
-  #define APP_CHANNEL           0x17
+  #define APP_CHANNEL           0x0F
   #define APP_BAND              0x00
   #define APP_MODULATION        0x24
 #else
-  #define APP_CHANNEL           0x17
+  #define APP_CHANNEL           0x0F
 #endif
 
 /* #define PHY_ENABLE_RANDOM_NUMBER_GENERATOR */

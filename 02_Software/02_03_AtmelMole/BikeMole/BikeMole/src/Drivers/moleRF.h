@@ -17,6 +17,8 @@
 #include "nwk.h"
 #include "phy.h"
 #include "sys.h"
+#include "sysTimer.h"
+
 #include "msg_structs.h"
 
 void appInit(void);

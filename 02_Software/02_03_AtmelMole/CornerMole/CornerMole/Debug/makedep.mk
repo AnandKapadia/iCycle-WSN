@@ -6,6 +6,14 @@ main.c
 
 src\ASF\common\services\clock\mega\sysclk.c
 
+src\Drivers\moleRF.c
+
+src\Drivers\serial_comms.c
+
+src\ASF\common\services\serial\usart_serial.c
+
+src\ASF\mega\drivers\usart\usart_megarf.c
+
 src\ASF\thirdparty\wireless\services\mega\drivers\tc\tc_megarf.c
 
 src\ASF\thirdparty\wireless\services\sal\atmegarf_sal\src\sal.c

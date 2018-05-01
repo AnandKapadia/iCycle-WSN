@@ -70,7 +70,7 @@ int main(void)
 
     cpu_irq_enable();
 
-    sendTimer.interval = 250;
+    sendTimer.interval = TX_BIKE_PACKET_MS;
     sendTimer.mode = SYS_TIMER_PERIODIC_MODE;
     sendTimer.handler = sendTimerHandler;
     SYS_TimerStart(&sendTimer);

@@ -239,7 +239,7 @@ int display_update(location_field_t bicycleDirection) {
 // RETURNS |                                                                   |
 // PURPOSE |                                                                   |
 //------------------------------------------------------------------------------
-void display_destroy() {
+void display_cleanup() {
   // Destroy the SDL objects
   SDL_DestroyWindow(sWindow);
   SDL_DestroyTexture(sVehicleTexture);

@@ -12,18 +12,16 @@
 #include "gpio.h"
 //#include "msg_structs.h"
 #include "moleRF.h"
-
-
-
-
+#include "serial_comms.h"
 
 static SYS_Timer_t sendTimer;
 static uint8_t payload = 0x4;
 
 static void sendTimerHandler(SYS_Timer_t *timer) {
 
-    //sendPacket(0xffff, &payload, 1);
-    gpio_toggle_pin(STATUS_LED);
+	//sendPacket(0xffff, &payload, 1);
+	//gpio_toggle_pin(STATUS_LED);
+	
 }
 
 int main(void)
@@ -63,6 +61,8 @@ int main(void)
     
     delay_ms(1000);
 
+	serial_init();
+
     cpu_irq_enable();
 
     sendTimer.interval = 500;
@@ -74,6 +74,15 @@ int main(void)
     while (1) 
     {
         SYS_TaskHandler();
+		serial_update_rx_buffer();
+/*
+		char c;
+		while((c = serial_read_byte_from_rx_buffer()) != '\0'){
+			serial_write_byte(c);
+		}
+        */
+
+		//serial_write_packet("HELLO FROM THE BOARD", strlen("HELLO FROM THE BOARD"));
     }
 }
 

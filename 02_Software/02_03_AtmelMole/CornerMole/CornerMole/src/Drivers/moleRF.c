@@ -32,6 +32,7 @@ void appInit(void) {
     NWK_SetPanId(APP_PANID);
     PHY_SetChannel(APP_CHANNEL);
     PHY_SetRxState(true);
+	PHY_SetTxPower(0x00);
 }
 
 // Reception callback function
@@ -54,8 +55,14 @@ bool receivePacket(NWK_DataInd_t *ind)
         cornerMessage.bikeRssi = ind->rssi;
         memcpy(&cornerMessage.bikePayload, ind->data, sizeof(bikeMessage));
 
+#ifdef DEBUG_UART
+        uint8_t uartMsgBuf[20];
+        sprintf(uartMsgBuf, "RSSI: %d\n", cornerMessage.bikeRssi);
+        serial_write_packet(uartMsgBuf, strlen(uartMsgBuf));
+#endif
+
         // Send the message to the master. This could be hoisted out of the callback
-        sendPacket(MASTER_ADDR, &cornerMessage, sizeof(cornerMessage));
+        //sendPacket(MASTER_ADDR, &cornerMessage, sizeof(cornerMessage));
     }
     
     // Do not send ACK frame

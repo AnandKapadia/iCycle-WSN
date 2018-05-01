@@ -6,7 +6,7 @@ main.d main.o: .././main.c ../src/asf.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stdint.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdint.h \
- C:\Program\ Files\ (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\include/avr/iom128rfa1.h \
+ C:\Program\ Files\ (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\include/avr/iom128rfa1.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\portpins.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\common.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
@@ -32,6 +32,13 @@ main.d main.o: .././main.c ../src/asf.h \
  ../src/ASF/common/services/ioport/mega/ioport.h \
  ../src/ASF/mega/utils/status_codes.h \
  ../src/ASF/thirdparty/wireless/services/mega/drivers/tc/tc_megarf.h \
+ ../src/ASF/common/services/serial/serial.h \
+ ../src/ASF/common/services/serial/megarf_usart/usart_serial.h \
+ ../src/ASF/mega/drivers/usart/usart_megarf.h \
+ ../src/config/conf_usart_serial.h \
+ ../src/ASF/thirdparty/wireless/avr2130_lwmesh/source/sys/inc/sysTimer.h \
+ ../src/Drivers/moleRF.h \
+ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h \
  ../src/config/config.h \
  ../src/ASF/thirdparty/wireless/avr2130_lwmesh/source/nwk/inc/nwk.h \
  ../src/ASF/thirdparty/wireless/avr2130_lwmesh/source/sys/inc/sysConfig.h \
@@ -43,7 +50,8 @@ main.d main.o: .././main.c ../src/asf.h \
  ../src/ASF/thirdparty/wireless/avr2130_lwmesh/source/nwk/inc/nwkDataReq.h \
  ../src/ASF/thirdparty/wireless/avr2130_lwmesh/source/phy/atmegarfa1/inc/phy.h \
  ../src/ASF/thirdparty/wireless/avr2130_lwmesh/source/sys/inc/sys.h \
- ../src/ASF/thirdparty/wireless/avr2130_lwmesh/source/sys/inc/sysConfig.h
+ ../src/ASF/thirdparty/wireless/avr2130_lwmesh/source/sys/inc/sysConfig.h \
+ ../src/Drivers/msg_structs.h ../src/Drivers/serial_comms.h
 
 ../src/asf.h:
 
@@ -61,7 +69,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdint.h:
 
-C:\Program\ Files\ (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\include/avr/iom128rfa1.h:
+C:\Program\ Files\ (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\include/avr/iom128rfa1.h:
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\portpins.h:
 
@@ -119,6 +127,20 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 ../src/ASF/thirdparty/wireless/services/mega/drivers/tc/tc_megarf.h:
 
+../src/ASF/common/services/serial/serial.h:
+
+../src/ASF/common/services/serial/megarf_usart/usart_serial.h:
+
+../src/ASF/mega/drivers/usart/usart_megarf.h:
+
+../src/config/conf_usart_serial.h:
+
+../src/ASF/thirdparty/wireless/avr2130_lwmesh/source/sys/inc/sysTimer.h:
+
+../src/Drivers/moleRF.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h:
+
 ../src/config/config.h:
 
 ../src/ASF/thirdparty/wireless/avr2130_lwmesh/source/nwk/inc/nwk.h:
@@ -142,3 +164,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 ../src/ASF/thirdparty/wireless/avr2130_lwmesh/source/sys/inc/sys.h:
 
 ../src/ASF/thirdparty/wireless/avr2130_lwmesh/source/sys/inc/sysConfig.h:
+
+../src/Drivers/msg_structs.h:
+
+../src/Drivers/serial_comms.h:

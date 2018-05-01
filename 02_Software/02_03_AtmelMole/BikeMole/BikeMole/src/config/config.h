@@ -48,10 +48,16 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+// Timer Periods/Intervals
+#define RX_RESPONSE_HOLD_MS     500
+#define TX_BIKE_PACKET_MS       250
+
+// IO Mapping
 #define TX_LED ((IOPORT_PORTB << 3) | 0x06)
 #define RX_LED ((IOPORT_PORTB << 3) | 0x07)
 #define LEFT_LED ((IOPORT_PORTG << 3) | 0x01)
 #define RIGHT_LED ((IOPORT_PORTG << 3) | 0x02)
+//#define BUZZER_PIN
     
 /*****************************************************************************
 *****************************************************************************/
@@ -62,11 +68,11 @@
 #define APP_SECURITY_KEY        "TestSecurityKey0"
 
 #if (defined (PHY_AT86RF212B) || defined (PHY_AT86RF212))
-  #define APP_CHANNEL           0x17
+  #define APP_CHANNEL           0x0F
   #define APP_BAND              0x00
   #define APP_MODULATION        0x24
 #else
-  #define APP_CHANNEL           0x17
+  #define APP_CHANNEL           0x0F
 #endif
 
 /* #define PHY_ENABLE_RANDOM_NUMBER_GENERATOR */

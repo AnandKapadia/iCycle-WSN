@@ -70,7 +70,7 @@
 // From module: IOPORT - General purpose I/O service
 #include <ioport.h>
 
-// From module: Interrupt management - megaAVR implementation
+// From module: Interrupt management - megaAVR and tinyAVR implementation
 #include <interrupt.h>
 
 // From module: MEGA compiler driver
@@ -85,5 +85,11 @@
 
 // From module: Timer/Counter (TC) driver
 #include <tc_megarf.h>
+
+// From module: USART - Serial interface - MEGARF implementation
+#include <serial.h>
+
+// From module: USART - Universal Synchronous/Asynchronous Receiver/Transmitter
+#include <usart_megarf.h>
 
 #endif // ASF_H
