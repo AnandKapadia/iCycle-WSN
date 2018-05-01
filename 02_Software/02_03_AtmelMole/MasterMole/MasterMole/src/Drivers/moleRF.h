@@ -21,6 +21,8 @@
 
 #include "serial_comms.h"
 #include "msg_structs.h"
+#include "params.h"
+#include "uart.h"
 
 void appInit(void);
 void sendPacket(uint16_t destAddr, uint8_t *payload, uint8_t size);
