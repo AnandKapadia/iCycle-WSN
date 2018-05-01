@@ -6,7 +6,7 @@ CC = g++
 # Warning Flags
 CFLAGS = -std=c++11 -Werror -Wpedantic -Wall -Wextra -Wdouble-promotion -Wmissing-include-dirs -Wswitch-enum -Wunused -Wuninitialized
 
-IFLAGS = -I../include/
+IFLAGS = -I../include/ -I../../02_05_Includes/
 
 LFLAGS = -lSDL2 -lpthread
 
