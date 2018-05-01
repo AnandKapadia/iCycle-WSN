@@ -10,6 +10,7 @@
 #define XBEE_RX_EMPTY 1
 
 #define MASTER_ADDRESS 0
+#define MY_ID 2
 
 int count = 0;
 XBee xbee = XBee();
@@ -98,7 +99,7 @@ void sendPacket(uint16_t destAddress, uint8_t* payload, uint8_t payloadSize) {
       // get the delivery status, the fifth byte
       if (txStatus.getStatus() == SUCCESS) {
         // success.  time to celebrate
-        flashLed(txLed, 2, 250);
+        flashLed(txLed, 2, 50);
       } else {
         // the remote XBee did not receive our packet. is it powered on?
         flashLed(errorLed, 3, 250);
@@ -137,6 +138,7 @@ void setup() {
   xbee.begin(Serial);
   
   flashLed(txLed, 3, 50);
+  flashLed(rxLed, 3, 50);
   delay(5000);
 }
 
@@ -155,10 +157,10 @@ void loop() {
     uint8_t *rxFrame = rx16.getFrameData();
 
     
-    flashLed(rxLed, rxPayload[0]+1, 50);
+    flashLed(rxLed, 2, 50);
 
     // Populate packet to master
-    uint8_t txPayload[3] = { 0 };
+    uint8_t txPayload[7] = { 0 };
     
     // Fill in source address
     // TODO convert to 64bit addressing so all bikes are unique
@@ -168,9 +170,15 @@ void loop() {
     // Fill in the RSSI of the received packet
     txPayload[2] = rx16.getRssi();
 
+    txPayload[3] = rxPayload[0];
+    txPayload[4] = rxPayload[1];
+    txPayload[5] = rxPayload[2];
+    txPayload[6] = rxPayload[3];
+
     //displayBinary(txPayload[2],
 
-    sendPacket(MASTER_ADDRESS, txPayload, 3);
+    delay(10*MY_ID);
+    sendPacket(MASTER_ADDRESS, txPayload, 7);
     
     
   }
