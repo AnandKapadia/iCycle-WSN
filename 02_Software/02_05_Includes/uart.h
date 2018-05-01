@@ -3,15 +3,14 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <termios.h>
 #include <time.h>
 #include <unistd.h>
 
 // Import custom modules
 #include "params.h"
 
-static const uint16_t MAX_UART_DATA_LENGTH = 10;
-static const uint16_t MAX_UART_BUFFER_LENGTH = 10 + MAX_UART_DATA_LENGTH;
+//static const uint16_t MAX_UART_DATA_LENGTH = 10;
+//static const uint16_t MAX_UART_BUFFER_LENGTH = 10 + MAX_UART_DATA_LENGTH;
 
 typedef enum uart_result_t {
   UART_SUCCESS,
