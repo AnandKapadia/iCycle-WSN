@@ -48,10 +48,16 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+// Timer Periods/Intervals
+#define RX_RESPONSE_HOLD_MS     500
+#define TX_BIKE_PACKET_MS       250
+
+// IO Mapping
 #define TX_LED ((IOPORT_PORTB << 3) | 0x06)
 #define RX_LED ((IOPORT_PORTB << 3) | 0x07)
 #define LEFT_LED ((IOPORT_PORTG << 3) | 0x01)
 #define RIGHT_LED ((IOPORT_PORTG << 3) | 0x02)
+//#define BUZZER_PIN
     
 /*****************************************************************************
 *****************************************************************************/
