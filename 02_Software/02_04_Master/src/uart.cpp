@@ -241,7 +241,7 @@ uart_result_t uart_read(uart_rxPacket_t *response) {
     // Get the trailing byte
     retv = uart_readUsb(sUsb, (char*)&(response->packetTrailer), sizeof(response->packetTrailer));
     if( (retv != UART_SUCCESS) || (response->packetTrailer != '\n') ) {
-      printf("Error: invalid checksum.\n");
+      printf("Error: invalid trailing character.\n");
       retvTotal = retv;
     }
 
