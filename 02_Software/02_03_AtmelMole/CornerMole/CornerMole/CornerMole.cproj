@@ -32,9 +32,11 @@
       <framework-data>
         <options>
           <option id="common.boards" value="Add" config="" content-id="Atmel.ASF" />
-          <option id="common.services.basic.gpio" value="Add" config="" content-id="Atmel.ASF" />
-          <option id="thirdparty.wireless.avr2130_lwmesh" value="Add" config="" content-id="Atmel.ASF" />
           <option id="common.services.delay" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="common.services.basic.gpio" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="common.services.basic.serial" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="thirdparty.wireless.avr2130_lwmesh" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="mega.drivers.usart" value="Add" config="" content-id="Atmel.ASF" />
         </options>
         <configurations />
         <files>
@@ -109,38 +111,43 @@
           <file path="src/ASF/thirdparty/wireless/services/sal/inc/sal_types.h" framework="" version="3.35.1" source="thirdparty\wireless\services\sal\inc\sal_types.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/thirdparty/wireless/services/sal/inc/sal_generic.h" framework="" version="3.35.1" source="thirdparty\wireless\services\sal\inc\sal_generic.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/thirdparty/wireless/services/sal/atmegarf_sal/src/sal.c" framework="" version="3.35.1" source="thirdparty\wireless\services\sal\atmegarf_sal\src\sal.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/mega/drivers/usart/usart_megarf.c" framework="" version="3.25.0" source="mega\drivers\usart\usart_megarf.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/mega/drivers/usart/usart_megarf.h" framework="" version="3.25.0" source="mega\drivers\usart\usart_megarf.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/common/services/serial/usart_serial.c" framework="" version="3.25.0" source="common\services\serial\usart_serial.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/common/services/serial/megarf_usart/usart_serial.h" framework="" version="3.25.0" source="common\services\serial\megarf_usart\usart_serial.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/common/services/serial/serial.h" framework="" version="3.25.0" source="common\services\serial\serial.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/Config/conf_usart_serial.h" framework="" version="3.25.0" source="common\services\serial\megarf_usart\module_config\conf_usart_serial.h" changed="False" content-id="Atmel.ASF" />
         </files>
         <documentation help="http://asf.atmel.com/docs/3.35.1/common.applications.user_application.user_board.megarfa1/html/index.html" />
         <offline-documentation help="" />
         <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.35.1" />
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.25.0" />
         </dependencies>
         <project id="common.applications.user_application.user_board.megarfa1" value="Add" config="" content-id="Atmel.ASF" />
         <board id="board.user_board.megarf" value="Add" config="" content-id="Atmel.ASF" />
       </framework-data>
     </AsfFrameworkConfig>
     <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
-    <avrtoolserialnumber>J41800075650</avrtoolserialnumber>
+    <avrtoolserialnumber>J41800076799</avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x1EA701</avrdeviceexpectedsignature>
     <com_atmel_avrdbg_tool_atmelice>
       <ToolOptions>
         <InterfaceProperties>
           <IspClock>125000</IspClock>
-          <JtagDbgClock>200000</JtagDbgClock>
         </InterfaceProperties>
         <InterfaceName>ISP</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.atmelice</ToolType>
-      <ToolNumber>J41800075650</ToolNumber>
+      <ToolNumber>J41800076799</ToolNumber>
       <ToolName>Atmel-ICE</ToolName>
     </com_atmel_avrdbg_tool_atmelice>
     <avrtoolinterface>ISP</avrtoolinterface>
-    <avrtoolinterfaceclock>200000</avrtoolinterfaceclock>
+    <avrtoolinterfaceclock>125000</avrtoolinterfaceclock>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGcc>
-        <avrgcc.common.Device>-mmcu=atmega128rfa1 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\gcc\dev\atmega128rfa1"</avrgcc.common.Device>
+        <avrgcc.common.Device>-mmcu=atmega128rfa1 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.132\gcc\dev\atmega128rfa1"</avrgcc.common.Device>
         <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
         <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
         <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
@@ -157,7 +164,6 @@
         </avrgcc.compiler.symbols.DefSymbols>
         <avrgcc.compiler.directories.IncludePaths>
           <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
             <Value>../src/ASF/common/boards/user_board</Value>
             <Value>../src/ASF/common/boards</Value>
             <Value>../src/ASF/mega/utils/preprocessor</Value>
@@ -177,6 +183,10 @@
             <Value>../src/ASF/thirdparty/wireless/services/common_hw_timer/mega</Value>
             <Value>../src/ASF/thirdparty/wireless/services/mega/drivers/tc</Value>
             <Value>../src/ASF/thirdparty/wireless/services/sal/inc</Value>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.132\include</Value>
+            <Value>../src/ASF/mega/drivers/usart</Value>
+            <Value>../src/ASF/common/services/serial/megarf_usart</Value>
+            <Value>../src/ASF/common/services/serial</Value>
           </ListValues>
         </avrgcc.compiler.directories.IncludePaths>
         <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
@@ -200,7 +210,6 @@
         <avrgcc.assembler.general.AssemblerFlags>-mrelax -DBOARD=USER_BOARD</avrgcc.assembler.general.AssemblerFlags>
         <avrgcc.assembler.general.IncludePaths>
           <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
             <Value>../src/ASF/common/boards/user_board</Value>
             <Value>../src/ASF/common/boards</Value>
             <Value>../src/ASF/mega/utils/preprocessor</Value>
@@ -220,6 +229,10 @@
             <Value>../src/ASF/thirdparty/wireless/services/common_hw_timer/mega</Value>
             <Value>../src/ASF/thirdparty/wireless/services/mega/drivers/tc</Value>
             <Value>../src/ASF/thirdparty/wireless/services/sal/inc</Value>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.132\include</Value>
+            <Value>../src/ASF/mega/drivers/usart</Value>
+            <Value>../src/ASF/common/services/serial/megarf_usart</Value>
+            <Value>../src/ASF/common/services/serial</Value>
           </ListValues>
         </avrgcc.assembler.general.IncludePaths>
       </AvrGcc>
@@ -228,7 +241,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGcc>
-  <avrgcc.common.Device>-mmcu=atmega128rfa1 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\gcc\dev\atmega128rfa1"</avrgcc.common.Device>
+  <avrgcc.common.Device>-mmcu=atmega128rfa1 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.132\gcc\dev\atmega128rfa1"</avrgcc.common.Device>
   <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
   <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
   <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
@@ -245,7 +258,6 @@
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
       <Value>../src/ASF/common/boards/user_board</Value>
       <Value>../src/ASF/common/boards</Value>
       <Value>../src/ASF/mega/utils/preprocessor</Value>
@@ -265,8 +277,12 @@
       <Value>../src/ASF/thirdparty/wireless/services/common_hw_timer/mega</Value>
       <Value>../src/ASF/thirdparty/wireless/services/mega/drivers/tc</Value>
       <Value>../src/ASF/thirdparty/wireless/services/sal/inc</Value>
-      <Value>../../..</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.132\include</Value>
+      <Value>../src/ASF/mega/drivers/usart</Value>
+      <Value>../src/ASF/common/services/serial/megarf_usart</Value>
+      <Value>../src/ASF/common/services/serial</Value>
       <Value>../src/Drivers</Value>
+      <Value>../../..</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
@@ -291,7 +307,6 @@
   <avrgcc.assembler.general.AssemblerFlags>-mrelax -DBOARD=USER_BOARD</avrgcc.assembler.general.AssemblerFlags>
   <avrgcc.assembler.general.IncludePaths>
     <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
       <Value>../src/ASF/common/boards/user_board</Value>
       <Value>../src/ASF/common/boards</Value>
       <Value>../src/ASF/mega/utils/preprocessor</Value>
@@ -311,6 +326,10 @@
       <Value>../src/ASF/thirdparty/wireless/services/common_hw_timer/mega</Value>
       <Value>../src/ASF/thirdparty/wireless/services/mega/drivers/tc</Value>
       <Value>../src/ASF/thirdparty/wireless/services/sal/inc</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.132\include</Value>
+      <Value>../src/ASF/mega/drivers/usart</Value>
+      <Value>../src/ASF/common/services/serial/megarf_usart</Value>
+      <Value>../src/ASF/common/services/serial</Value>
     </ListValues>
   </avrgcc.assembler.general.IncludePaths>
   <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
@@ -324,16 +343,43 @@
     <Compile Include="src\ASF\common\services\clock\mega\sysclk.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\services\mega\drivers\tc\tc_megarf.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\services\sal\atmegarf_sal\src\sal.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\Drivers\moleRF.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\Drivers\moleRF.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\Drivers\msg_structs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\Drivers\serial_comms.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\Drivers\serial_comms.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\config\conf_usart_serial.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\common\services\serial\megarf_usart\usart_serial.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\common\services\serial\serial.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\common\services\serial\usart_serial.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\mega\drivers\usart\usart_megarf.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\mega\drivers\usart\usart_megarf.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\thirdparty\wireless\services\mega\drivers\tc\tc_megarf.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\services\sal\atmegarf_sal\src\sal.c">
       <SubType>compile</SubType>
     </Compile>
     <None Include="src\ASF\thirdparty\wireless\services\sal\inc\sal_generic.h">
@@ -556,12 +602,15 @@
     <Folder Include="src\ASF\common\services\gpio\mega_gpio\" />
     <Folder Include="src\ASF\common\services\ioport\" />
     <Folder Include="src\ASF\common\services\ioport\mega\" />
+    <Folder Include="src\ASF\common\services\serial\" />
+    <Folder Include="src\ASF\common\services\serial\megarf_usart\" />
     <Folder Include="src\ASF\common\utils\" />
     <Folder Include="src\ASF\common\utils\interrupt\" />
     <Folder Include="src\ASF\common\utils\make\" />
     <Folder Include="src\ASF\mega\" />
     <Folder Include="src\ASF\mega\drivers\" />
     <Folder Include="src\ASF\mega\drivers\cpu\" />
+    <Folder Include="src\ASF\mega\drivers\usart\" />
     <Folder Include="src\ASF\mega\utils\" />
     <Folder Include="src\ASF\mega\utils\assembler\" />
     <Folder Include="src\ASF\mega\utils\preprocessor\" />
@@ -591,7 +640,7 @@
     <Folder Include="src\ASF\thirdparty\wireless\services\sal\atmegarf_sal\src\" />
     <Folder Include="src\ASF\thirdparty\wireless\services\sal\inc\" />
     <Folder Include="src\config\" />
-    <Folder Include="src\Drivers" />
+    <Folder Include="src\Drivers\" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

@@ -8,7 +8,7 @@ src/ASF/common/boards/user_board/init.d \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stdint.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdint.h \
- C:\Program\ Files\ (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\include/avr/iom128rfa1.h \
+ C:\Program\ Files\ (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\include/avr/iom128rfa1.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\portpins.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\common.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
@@ -33,7 +33,11 @@ src/ASF/common/boards/user_board/init.d \
  ../src/ASF/common/services/ioport/ioport.h \
  ../src/ASF/common/services/ioport/mega/ioport.h \
  ../src/ASF/mega/utils/status_codes.h \
- ../src/ASF/thirdparty/wireless/services/mega/drivers/tc/tc_megarf.h
+ ../src/ASF/thirdparty/wireless/services/mega/drivers/tc/tc_megarf.h \
+ ../src/ASF/common/services/serial/serial.h \
+ ../src/ASF/common/services/serial/megarf_usart/usart_serial.h \
+ ../src/ASF/mega/drivers/usart/usart_megarf.h \
+ ../src/config/conf_usart_serial.h
 
 ../src/asf.h:
 
@@ -51,7 +55,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdint.h:
 
-C:\Program\ Files\ (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\include/avr/iom128rfa1.h:
+C:\Program\ Files\ (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\include/avr/iom128rfa1.h:
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\portpins.h:
 
@@ -108,3 +112,11 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 ../src/ASF/mega/utils/status_codes.h:
 
 ../src/ASF/thirdparty/wireless/services/mega/drivers/tc/tc_megarf.h:
+
+../src/ASF/common/services/serial/serial.h:
+
+../src/ASF/common/services/serial/megarf_usart/usart_serial.h:
+
+../src/ASF/mega/drivers/usart/usart_megarf.h:
+
+../src/config/conf_usart_serial.h:
