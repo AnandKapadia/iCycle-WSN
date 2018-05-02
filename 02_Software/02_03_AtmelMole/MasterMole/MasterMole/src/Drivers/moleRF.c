@@ -52,14 +52,13 @@ bool receivePacket(NWK_DataInd_t *ind)
     
     if(ind->dstAddr == BROADCAST_ADDR && ind->size == sizeof(bikeMessage)) {
         // We received a packet from a bike node! send it to the pi
-        
         piMessage.packetHeader = 0x7A; // TODO convert to const
         piMessage.sourceAddress.vehicleAddress = (uint8_t) ind->srcAddr;
         piMessage.sourceAddress.cornerAddress = FRONT_LEFT;
         piMessage.sourceAddress.vehicleType = BICYCLE;
         piMessage.rssi = ind->rssi;
         piMessage.packetTrailer = '\n';
-        memcpy(&piMessage.bikeMessage, ind->data, sizeof(bikeMessage));
+        memcpy(&piMessage.bikeMessage, ind->data, sizeof(bikeMessage_t));
 
     } else if (ind->dstAddr == MASTER_ADDR && ind->size == sizeof(cornerMessage_t)) {
         // We received a message from another corner, parse it to send to the pi

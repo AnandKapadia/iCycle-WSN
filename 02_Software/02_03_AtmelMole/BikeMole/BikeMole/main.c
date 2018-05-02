@@ -43,9 +43,9 @@ int main(void)
     NWK_OpenEndpoint(APP_ENDPOINT, receivePacket);
 
     // Initialize transmission packet
-    bikeMessage.imuX = 'x';
-    bikeMessage.imuY = 'y';
-    bikeMessage.imuZ = 'z';
+    bikeMessage.imuX = 'X';
+    bikeMessage.imuY = 'Y';
+    bikeMessage.imuZ = 'Z';
     bikeMessage.other = 0;
     
     
