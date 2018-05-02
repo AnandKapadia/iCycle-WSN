@@ -47,19 +47,18 @@ bool receivePacket(NWK_DataInd_t *ind)
 {
     // process the frame
     // Blink RX LED
-    blinkGPIO(RX_LED, 50, 1);
+    blinkGPIO(RX_LED, TXRX_BLINK_TIME, 1);
     
     
     if(ind->dstAddr == BROADCAST_ADDR && ind->size == sizeof(bikeMessage)) {
         // We received a packet from a bike node! send it to the pi
-        
         piMessage.packetHeader = 0x7A; // TODO convert to const
         piMessage.sourceAddress.vehicleAddress = (uint8_t) ind->srcAddr;
         piMessage.sourceAddress.cornerAddress = FRONT_LEFT;
         piMessage.sourceAddress.vehicleType = BICYCLE;
         piMessage.rssi = ind->rssi;
         piMessage.packetTrailer = '\n';
-        memcpy(&piMessage.bikeMessage, ind->data, sizeof(bikeMessage));
+        memcpy(&piMessage.bikeMessage, ind->data, sizeof(bikeMessage_t));
 
     } else if (ind->dstAddr == MASTER_ADDR && ind->size == sizeof(cornerMessage_t)) {
         // We received a message from another corner, parse it to send to the pi
@@ -88,7 +87,7 @@ static void txConfirm(NWK_DataReq_t *req){
     
     if(req->status == NWK_SUCCESS_STATUS) {
         // Blink LED to confirm transmission
-        blinkGPIO(TX_LED, 100, 1);
+        blinkGPIO(TX_LED, TXRX_BLINK_TIME, 1);
         } else if(req->status == NWK_ERROR_STATUS) {
         // ERROR: transmission failed
         blinkGPIO(ERROR_LED, 100, 1);
