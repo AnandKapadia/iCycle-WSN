@@ -17,6 +17,14 @@
 static SYS_Timer_t sendTimer;
 static uint8_t payload = 0x4;
 
+// Master message to send to a bicycle
+masterMessage_t masterMessage;
+
+// UART pi packet struct
+static uint8_t uartRxBuf[sizeof(uart_txPacket_t)];
+static uart_txPacket_t uart_txPacket;
+//uint8_t uartIsFresh = false;
+
 static void sendTimerHandler(SYS_Timer_t *timer) {
 
 	//sendPacket(0xffff, &payload, 1);
@@ -26,7 +34,8 @@ static void sendTimerHandler(SYS_Timer_t *timer) {
 
 int main(void)
 {
-    
+    uint8_t uartRx;
+
   	irq_initialize_vectors();
 
     // TODO switch clock source to external oscillator?
@@ -65,22 +74,32 @@ int main(void)
 
     cpu_irq_enable();
 
+/*
     sendTimer.interval = 500;
     sendTimer.mode = SYS_TIMER_PERIODIC_MODE;
     sendTimer.handler = sendTimerHandler;
-    SYS_TimerStart(&sendTimer);
+    SYS_TimerStart(&sendTimer);*/
 
     /* Replace with your application code */
     while (1) 
     {
         SYS_TaskHandler();
-		serial_update_rx_buffer();
-/*
-		char c;
-		while((c = serial_read_byte_from_rx_buffer()) != '\0'){
-			serial_write_byte(c);
-		}
-        */
+
+        // Receive a message from the pi
+
+        // Check for a packet header
+        read_bytes_to_buffer(&(uartRxBuf[0]), 1);
+        if (uartRxBuf[0] == EXPECTED_PACKET_HEADER) {
+            //Received a packet header, pull the rest of the packet into the buffer
+            read_bytes_to_buffer(sizeof(uart_txPacket) - 1, &(uartRxBuf[1]));
+            memcpy(&uart_txPacket, &uartRxBuf, sizeof(uart_txPacket_t));
+            if (true) { // TODO check for trailer
+                // Process packet from pi, send to bicycle
+                masterMessage.masterID = MASTER_ADDR;
+                masterMessage.location = uart_txPacket.bicycleRelativeToVehicleOrientation;
+                sendPacket(uart_txPacket.destinationAddress.vehicleAddress, &masterMessage, sizeof(masterMessage_t));
+            }
+        }
 
 		//serial_write_packet("HELLO FROM THE BOARD", strlen("HELLO FROM THE BOARD"));
     }

@@ -47,15 +47,14 @@ void serial_write_byte(char c){
 }
 
 
-//returns 1 if there has been a byte read
-//returns 0 of no update to the buffer
+//returns number of bytes written to the buffer
 int32_t serial_update_rx_buffer(){
 	//get a byte
+    uint8_t bytes_received = 0;
 	uint8_t received_byte;
-	int32_t ret_val = 0;
 	usart_serial_getchar(USART_SERIAL, &received_byte);
 	while(received_byte != '\0') {
-		ret_val = 1;
+        bytes_received++;
 		RX_BUF[rx_buf_write_idx] = received_byte;
 		rx_buf_write_idx++;
 		if(rx_buf_write_idx > BUF_SIZE){
@@ -64,8 +63,22 @@ int32_t serial_update_rx_buffer(){
 		usart_serial_getchar(USART_SERIAL, &received_byte);
 	}
 	
-	return ret_val;
+	return bytes_received;
 }
+
+// Read a specified number of bytes to a buffer
+uint8_t read_bytes_to_buffer(uint8_t* buf, uint8_t n){
+    //get a byte
+    uint8_t bytes_received = 0;
+    uint8_t received_byte;
+    for(bytes_received = 0; bytes_received < n; bytes_received++) {
+        usart_serial_getchar(USART_SERIAL, &received_byte);
+        buf[bytes_received] = received_byte;
+    }
+
+    return bytes_received;
+}
+
 
 void serial_write_packet(const uint8_t *data, size_t len){
 	 usart_serial_write_packet(USART_SERIAL, data, len);
