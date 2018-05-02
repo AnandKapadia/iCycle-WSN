@@ -197,8 +197,8 @@ uart_result_t uart_read(uart_rxPacket_t *response) {
   retv = uart_readUsb(sUsb, (char*)&(response->packetHeader), sizeof(response->packetHeader));
   if( (retv != UART_SUCCESS) || (response->packetHeader != EXPECTED_PACKET_HEADER) ) {
     if(retv == UART_SUCCESS) {
-      printf("Error: invalid packet header value\n");
-      printf("actual value: 0x%x, expected 0x%x\n", response->packetHeader, EXPECTED_PACKET_HEADER);
+//      printf("Error: invalid packet header value\n");
+//      printf("actual value: 0x%x, expected 0x%x\n", response->packetHeader, EXPECTED_PACKET_HEADER);
       retvTotal = UART_FAILURE;
     }
     else if(retv == UART_FAILURE) {
@@ -241,7 +241,7 @@ uart_result_t uart_read(uart_rxPacket_t *response) {
     // Get the trailing byte
     retv = uart_readUsb(sUsb, (char*)&(response->packetTrailer), sizeof(response->packetTrailer));
     if( (retv != UART_SUCCESS) || (response->packetTrailer != '\n') ) {
-      printf("Error: invalid trailing character.\n");
+//      printf("Error: invalid trailing character.\n");
       retvTotal = retv;
     }
 

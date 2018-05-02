@@ -41,20 +41,17 @@ int main() {
   corner_init();
   uart_init();
 
-  uint32_t i = 0;
   // Execute console
   while(true) {
 
-    printf("%d\n", i);
-    ++i;
-    uart_result_t retv = UART_SUCCESS;
+    //uart_result_t retv = UART_SUCCESS;
 
+    /*
     uart_rxPacket_t response;
     memset(&response, 0, sizeof(response));
     retv = uart_read(&response);
     switch(retv) {
       case UART_FAILURE:
-        printf("Error: uart could not read correctly.\n");
         break;
       case UART_TIMEOUT:
         break;
@@ -64,9 +61,10 @@ int main() {
       default:
         break;
     }
+    */
 
-//    location_field_t bicycleOrientation = corner_approximatePosition();
-//    display_update(bicycleOrientation);
+    location_field_t bicycleOrientation = corner_approximatePosition();
+    display_update(bicycleOrientation);
 
     /*
     // Intialize packet to be transmitted

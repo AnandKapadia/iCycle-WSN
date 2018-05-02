@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-static const uint8_t NUM_CORNERS = 4;
+static const uint8_t NUM_CORNERS = 5;
 static const uint8_t MY_VEHICLE_ADDRESS = 0;
 
 typedef enum location_field_t {
