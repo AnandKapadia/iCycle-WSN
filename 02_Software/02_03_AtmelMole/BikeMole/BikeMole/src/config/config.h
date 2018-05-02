@@ -50,7 +50,7 @@
 
 // Timer Periods/Intervals
 #define RX_RESPONSE_HOLD_MS     500
-#define TX_BIKE_PACKET_MS       250
+#define TX_BIKE_PACKET_MS       100
 
 // IO Mapping
 #define TX_LED ((IOPORT_PORTB << 3) | 0x06)

@@ -30,7 +30,7 @@ bool receivePacket(NWK_DataInd_t *ind)
 {
     // process the frame
     // Blink RX LED
-    blinkGPIO(RX_LED, 50, 1);
+    blinkGPIO(RX_LED, TXRX_BLINK_TIME, 1);
     
     memcpy(&masterMessage, ind->data, sizeof(masterMessage));
     // TODO set LEDs and buzzer based on car proximity
@@ -89,7 +89,7 @@ static void txConfirm(NWK_DataReq_t *req){
     
     if(req->status == NWK_SUCCESS_STATUS) {
         // Blink LED to confirm transmission
-        blinkGPIO(TX_LED, 50, 1);
+        blinkGPIO(TX_LED, TXRX_BLINK_TIME, 1);
     }
 }
 // Transmit a packet

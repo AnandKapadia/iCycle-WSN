@@ -58,7 +58,7 @@
     
 /*****************************************************************************
 *****************************************************************************/
-#define APP_ADDR                FRONT_RIGHT
+#define APP_ADDR                REAR_RIGHT
 #define APP_PANID               0x1239
 #define APP_SENDING_INTERVAL    10000
 #define APP_ENDPOINT            1

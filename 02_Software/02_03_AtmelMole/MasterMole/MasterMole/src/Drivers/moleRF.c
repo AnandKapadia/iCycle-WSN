@@ -47,7 +47,7 @@ bool receivePacket(NWK_DataInd_t *ind)
 {
     // process the frame
     // Blink RX LED
-    blinkGPIO(RX_LED, 50, 1);
+    blinkGPIO(RX_LED, TXRX_BLINK_TIME, 1);
     
     
     if(ind->dstAddr == BROADCAST_ADDR && ind->size == sizeof(bikeMessage)) {
@@ -87,7 +87,7 @@ static void txConfirm(NWK_DataReq_t *req){
     
     if(req->status == NWK_SUCCESS_STATUS) {
         // Blink LED to confirm transmission
-        blinkGPIO(TX_LED, 100, 1);
+        blinkGPIO(TX_LED, TXRX_BLINK_TIME, 1);
         } else if(req->status == NWK_ERROR_STATUS) {
         // ERROR: transmission failed
         blinkGPIO(ERROR_LED, 100, 1);
