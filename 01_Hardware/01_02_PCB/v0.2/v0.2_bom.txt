@@ -1,0 +1,6 @@
+Partlist exported from /Users/akhome/Desktop/Year 4_2/18748/iCycle-WSN/01_Hardware/01_02_PCB/v0.2/v0.2.sch at 4/16/18 10:23 AM
+
+Qty Value         Device               Package           Parts                                                                                 Description                                                                         PROD_ID     SF_SKU    VALUE     
+
+1   16MHz         CRYSTAL5X3           CRYSTAL-SMD-5X3   MICROCONTROLLER1:Y1                                                                   Various standard crystals. Proven footprints. Spark Fun Electronics SKU : COM-00534                                 
+1   32.768kHz     CRYSTAL32-SMD        CRYSTAL-32KHZ-SMD MICROCONTROLLER1:Y2                                                                   Various standard crystals. Proven footprints. Spark Fun Electronics SKU : COM-00534                                 
